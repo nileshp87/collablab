@@ -4,8 +4,24 @@ html(lang=en)
     title WPI Collablab - #{title}
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js')
     script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js')
-    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css')
+    link(href='css/signin.css', rel='stylesheet')
+    link(href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css', rel='stylesheet')
+    link(href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css', rel='stylesheet')
+    script(src='js/collab.js')
   body
-    input(type='text', id='idNumber')
-    input(type='submit', onClick='submitLogin()')
+    .container
+      h1
+        | The lab is currently:
+        div(id='isOpen')
+          #{message}
+      form.form-signin(role='form' onsubmit="return false")
+        h2.form-signin-heading Swipe to Enter Lab
+        input.form-control(type='text', placeholder='Swipe or Type User ID', autofocus='', id='idNumber')
+        button.btn.btn-lg.btn-primary.btn-block(type='submit', onClick='submitLogin()') Submit
+      br
+      br
+      h3
+        | <strong>Who's Here?</strong>
+      ul
+        div(id='who')
     script(src='js/collab.js')

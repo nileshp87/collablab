@@ -9,7 +9,9 @@
   "author": "Nilesh Patel",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.13.3",
     "express": "^4.13.3",
-    "jade": "^1.11.0"
+    "jade": "^1.11.0",
+    "redis": "^1.0.0"
   }
 }
