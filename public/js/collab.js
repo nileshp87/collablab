@@ -36,7 +36,7 @@ function submitLogin(){
         switch(statusCode){
             case 0: showSuccess(); break;
             case 1: noLabMonitor(); break;
-            case 2: showNotRegistered(); break;
+            case 2: showRegistration(); break;
             case 3: showUsersPresent(); break;
             default: showFailure(); break;
         }
@@ -61,20 +61,20 @@ function updatePage(newStatus){
   newList = '';
 
   for(index in newStatus.members){
-    newList += '<li>' + newStatus.members[index].name + '</li>';
+    newList += '<li>' + newStatus.members[index] + '</li>';
   }
   document.getElementById('who').innerHTML = newList;
 }
 
 function showBadRead(){
-    console.log("Bad Read");
+  $.notify("Swipe Error, try again.", "error");
 }
 
 function showSuccess(){
-    console.log("Successful Read");
-    getStatus();
+  $.notify("Swipe Successful!", "success");
+  getStatus();
 }
 
 function showFailure(){
-    console.log("Lab is Closed");
+  $.notify("Lab is closed!", "error");
 }

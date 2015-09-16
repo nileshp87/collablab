@@ -6,25 +6,39 @@ var config = require('./config');
 
 var labStatus = {
   open: false,
-  members: [],
+  members: {}
 };
+
+var names = [];
 
 client.on('error', function(err) {
   console.log("Redis Error: " + err);
 });
 
 
-var app = express();
-app.use(express.static('public'));
-app.set('view engine', 'jade');
-var bodyParser = require('body-parser');
-app.use(bodyParser.json());
+var internal = express();
+var external = express();
 
-app.get('/', function(req, res){
-    res.render('index', { title: 'Swiper', message: 'OPEN'});
+internal.use(express.static('public'));
+external.use(express.static('public'));
+internal.set('view engine', 'jade');
+external.set('view engine', 'jade');
+var bodyParser = require('body-parser');
+internal.use(bodyParser.json());
+
+internal.get('/', function(req, res){
+    res.render('internalIndex', { title: 'Swiper', message: labStatus.open ? 'OPEN' : 'CLOSED'});
 });
 
-app.post('/swipe', function(req, res) {
+external.get('/', function(req, res){
+    res.render('externalIndex', { title: 'Status', message: labStatus.open ? 'OPEN' : 'CLOSED' });
+});
+
+external.get('/status', function(req, res){
+  res.send(JSON.stringify({"open":labStatus.open, "members":names}));
+});
+
+internal.post('/swipe', function(req, res) {
   console.log(req.body);
   if(req.body.idNumber != null){
     processSwipe(req.body.idNumber, res);
@@ -33,15 +47,15 @@ app.post('/swipe', function(req, res) {
   }
 });
 
-app.get('/status', function(req, res) {
-  res.send(JSON.stringify(labStatus));
+internal.get('/status', function(req, res) {
+  res.send(JSON.stringify({"open":labStatus.open, "members":names}));
 });
-
-//app.use('/swipe', swipe);
 
 client.on('ready', function() {
   setupRedis();
-  app.listen(8080);
+  internal.set('domain','localhost');
+  internal.listen(8080);
+  external.listen(8181);
 });
 
 function setupRedis() {
@@ -77,32 +91,26 @@ function processSwipe(idNumber, res){
       res.send("1");
       return;
     }
-    var index = isPresent(user);
-    if(index == -1){
-      labStatus.members.push(user);
+    if(labStatus.members[idNumber] == undefined){
+      labStatus.members[idNumber] = user;
       labStatus.open = true;
       res.send("0");
+      names.push(user.name);
+      return;
+    }
+    delete labStatus.members[idNumber];
+    names.splice(names.indexOf(user.name),1);
+    if(!isLabMonitorInLab() && user.labMonitor && labStatus.members.length > 0){
+      res.send("3");
+      labStatus.members[idNumber] = user;
+      return;
+    }else if (!isLabMonitorInLab()) {
+      labStatus.open = false;
+      res.send("0");
     }else{
-      labStatus.members.splice(index, 1);
-      if(!isLabMonitorInLab() && user.labMonitor && labStatus.members.length > 0){
-        res.send("3");
-        labStatus.members.push(user);
-      }else if (!isLabMonitorInLab() && labStatus.members.length == 0) {
-        labStatus.open = false;
-        res.send("0");
-      }
+      res.send("0");
     }
-
   });
-}
-
-function isPresent(user){
-  for(i in labStatus.members){
-    if(labStatus.members[i].idNumber == user.idNumber){
-      return i;
-    }
-  }
-  return -1;
 }
 
 function isLabMonitorInLab(){

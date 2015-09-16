@@ -11,17 +11,13 @@ html(lang=en)
   body
     .container
       h1
-        | The lab is currently:
-        div(id='isOpen')
+        | The lab is currently:&nbsp;
+        span(id='isOpen')
           #{message}
-      form.form-signin(role='form' onsubmit="return false")
-        h2.form-signin-heading Swipe to Enter Lab
-        input.form-control(type='text', placeholder='Swipe or Type User ID', autofocus='', id='idNumber')
-        button.btn.btn-lg.btn-primary.btn-block(type='submit', onClick='submitLogin()') Submit
       br
       br
       h3
-        | <strong>Who's Here?</strong>
+        | <strong>Who's There?</strong>
       ul
         div(id='who')
     script(src='js/collab.js')
