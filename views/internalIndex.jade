@@ -11,14 +11,14 @@ html(lang=en)
         | The lab is currently:&nbsp;
         span(id='isOpen')
           #{message}
-      form.form-signin(role='form' onsubmit="return false")
+      form.form-signin(role='form' onsubmit="return false;")
         h2.form-signin-heading Swipe to Enter Lab
         input.form-control(type='text', placeholder='Swipe or Type User ID', autofocus='', id='idNumber')
         button.btn.btn-lg.btn-primary.btn-block(type='submit', onClick='submitLogin()') Submit
       br
       br
       h3
-        | <strong>Who's Here?</strong>
+        strong Who's Here?
       h4
         ul
           div(id='who')
@@ -28,17 +28,29 @@ html(lang=en)
           .modal-header
             button(type='button', class='close', data-dismiss='modal')
             h3 Register Yourself
+              br
+              small &nbsp;&nbsp;Fill out the fields to register
           .modal-body
-            br
-            form.form-signin(role='form' onsubmit="register()")
-              h4.modal-title(id='registrationLabel') Fill out the fields to register
-              input.form-control(type='text', placeholder='Your full name', id='name')
-              input.form-control(type='text', placeholder='Swipe or enter your ID', id='idNumber')
-              input.form-control(type='text', placeholder='Swipe or enter lab monitor ID', id='approval')
+            form.form-horizontal(role='form', id='registrationForm', onsubmit='return false;')
+              #nameGroup.form-group
+                label.col-md-offset-2.col-md-4.control-label(for='name') Your Full Name
+                .col-md-6
+                  input.form-control(type='text', placeholder='Your full name', id='name')
+              #userIdNumberGroup.form-group
+                label.col-md-offset-2.col-md-4.control-label(for='userIdNumber') Your ID Number
+                .col-md-6
+                  input.form-control(type='text' placeholder='Enter Your ID Number', id="userIdNumber")
+              #approvalGroup.form-group
+                label.col-md-offset-2.col-md-4.control-label(for='approval') Lab Monitor's ID Number
+                .col-md-6
+                  input.form-control(type='text', placeholder='Enter a Lab Monitor ID Number', id='approval')
+              input.hidden(type='submit', onClick='submitRegistration()')
           .modal-footer
-            .btn-group.btn-block
-              button.btn.btn-lg.btn-danger(type='submit') Cancel Registration
-              button.btn.btn-lg.btn-primary(type='submit') Submit Registration
+            .form-group
+              .col-md-6
+                button.btn.btn-lg.btn-danger.btn-block(onClick='cancelRegistration()') Cancel Registration
+              .col-md-6
+                button.btn.btn-lg.btn-primary.btn-block(onClick='submitRegistration()') Submit Registration
 
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js')
     script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js')
