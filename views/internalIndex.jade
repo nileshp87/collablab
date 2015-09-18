@@ -22,25 +22,23 @@ html(lang=en)
       h4
         ul
           div(id='who')
-    #myModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
-      .modal-header
-        button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
-        h3#myModalLabel Modal header
-      .modal-body
-        p One fine body…
-      .modal-footer
-        button.btn(data-dismiss='modal', aria-hidden='true') Close
-        button.btn.btn-primary Save changes
     #registration.modal.fade(aria-hidden='true', tabindex='-1', role='dialog', aria-labelledby='registrationLabel')
-      .modal-header
-        button(type='button', class='close', data-dismiss='modal')
-        h3 Register Yourself
-      .modal-body
-        form.form-signin(role='form' onsubmit="registration()")
-          h4.modal-title(id='registrationLabel') Fill out the fields to register
-          input.form-control(type='text', placeholder='Your full name', id='name')
-          button.btn.btn-lg.btn-primary.btn-block(type='submit')
-      .modal-footer
+      .modal-dialog
+        .modal-content
+          .modal-header
+            button(type='button', class='close', data-dismiss='modal')
+            h3 Register Yourself
+          .modal-body
+            br
+            form.form-signin(role='form' onsubmit="register()")
+              h4.modal-title(id='registrationLabel') Fill out the fields to register
+              input.form-control(type='text', placeholder='Your full name', id='name')
+              input.form-control(type='text', placeholder='Swipe or enter your ID', id='idNumber')
+              input.form-control(type='text', placeholder='Swipe or enter lab monitor ID', id='approval')
+          .modal-footer
+            .btn-group.btn-block
+              button.btn.btn-lg.btn-danger(type='submit') Cancel Registration
+              button.btn.btn-lg.btn-primary(type='submit') Submit Registration
 
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js')
     script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js')
