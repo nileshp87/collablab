@@ -8,22 +8,25 @@ html(lang=en)
   body
     .container
       .col-md-6.col-md-offset-3
-        h1
-          | The lab is currently&nbsp;
-          strong
-            span(id='isOpen') 
-              #{message}
-        form.form-signin(role='form' onsubmit="return false;")
-          h2.form-signin-heading Swipe to Enter Lab
-          input.form-control(type='text', placeholder='Swipe or Type User ID', autofocus='', id='idNumber')
-          button.btn.btn-lg.btn-primary.btn-block(type='submit', onClick='submitLogin()') Submit
-        br
-        br
-        h3
-          strong Who's Here?
-        h4
-          ul
-            div(id='who')
+        h1.text-center
+          | Account Management
+        form.form-horizontal(role='form' onsubmit="return false;")
+          h2.col-md-offset-1
+            small
+              | Enter credentials to enter portal
+          .form-group
+            label.col-md-4.control-label(for='idNumber') Your ID Number
+            .col-md-7
+              input.form-control(type='text', placeholder='Swipe or Type User ID', autofocus='', id='idNumber')
+          .form-group
+            label.col-md-4.control-label(for='password') Your Password
+            .col-md-7
+              input.form-control(type='password', placeholder='Enter Password', id='idNumber')
+          .col-md-12
+            .col-md-5.col-md-offset-1
+              button.btn.btn-lg.btn-danger.btn-block(type='submit', onClick='cancelLogin()') Cancel Login
+            .col-md-5
+              button.btn.btn-lg.btn-primary.btn-block(type='submit', onClick='submitLogin()') Login
     #registration.modal.fade(aria-hidden='true', tabindex='-1', role='dialog', aria-labelledby='registrationLabel')
       .modal-dialog
         .modal-content

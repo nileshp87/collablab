@@ -26,10 +26,10 @@ internal.use(express.static('public'));
 external.use(express.static('public'));
 internal.set('view engine', 'jade');
 external.set('view engine', 'jade');
-internal.use(cookieParser('45kybfg89l4y89lb5kymg8rl'));
-external.use(cookieParser('aopr8bsr28ga786noytchons'));
-internal.use(cookieSession({secret: '45kybfg89l4y89lb5kymg8rl', name: 'collab'}));
-external.use(cookieSession({secret: 'aopr8bsr28ga786noytchons', name: 'collab'}));
+internal.use(cookieParser(config.internalSecret));
+external.use(cookieParser(config.externalSecret));
+internal.use(cookieSession({secret: config.internalSecret, name: 'collab'}));
+external.use(cookieSession({secret: config.externalSecret, name: 'collab'}));
 var bodyParser = require('body-parser');
 internal.use(bodyParser.json());
 
@@ -76,10 +76,19 @@ client.on('ready', function() {
   external.listen(8181);
 });
 
-internal.get('/manage', function(req, res){
+internal.get('/manage', getManage);
+external.get('/manage', getManage);
 
-});
+internal.get('/login', getLogin);
+external.get('/login', getLogin);
 
+function getManage(req, res){
+  res.render('manage');
+}
+
+function getLogin(req, res){
+  res.render('login');
+}
 
 function setupRedis() {
   client.hget(config.adminId, function(err, reply){
@@ -111,7 +120,7 @@ function processSwipe(idNumber, res){
       return;
     }
 
-    if( !labStatus.open && !user.labMonitor){
+    if( !labStatus.open && user.labMonitor == 'false'){
       res.send("1").end();
       return;
     }
@@ -123,13 +132,18 @@ function processSwipe(idNumber, res){
       names.push(user.name);
       return;
     }
+    console.log(user);
     delete labStatus.members[idNumber];
+    console.log(user);
     names.splice(names.indexOf(user.name),1);
-    if(!isLabMonitorInLab() && user.labMonitor && labStatus.members.length > 0){
-      res.send("3".end());
+    if(!isLabMonitorInLab() && user.labMonitor == 'true' && names.length > 0){
+      res.send("3").end();
       labStatus.members[idNumber] = user;
+      names.push(user.name);
       return;
     }else if (!isLabMonitorInLab()) {
+      console.log(user.labMonitor);
+      console.log(labStatus.members.length);
       labStatus.open = false;
       res.send("0").end();
     }else{
@@ -160,7 +174,7 @@ function registerUser(name, newUserId, approverId, res){
 
 function isLabMonitorInLab(){
   for(i in labStatus.members){
-    if(labStatus.members[i].labMonitor){
+    if(labStatus.members[i].labMonitor == 'true'){
       return true;
     }
   }

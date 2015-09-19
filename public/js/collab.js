@@ -1,4 +1,5 @@
 var labStatus = null;
+var closing_attempts = 0;
 getStatus();
 
 $('#registration').on('shown.bs.modal', function() {
@@ -44,7 +45,7 @@ function submitLogin(){
         console.log(statusCode);
         switch(statusCode){
             case 0: showSuccess(); break;
-            case 1: noLabMonitor(); break;
+            case 1: showFailure(); break;
             case 2: showRegistration(idNumber); break;
             case 3: showUsersPresent(); break;
             default: showFailure(); break;
@@ -63,8 +64,12 @@ function getStatus(){
 function updatePage(newStatus){
   if(newStatus.open){
     document.getElementById('isOpen').innerHTML = 'OPEN';
+    $('#isOpen').removeClass('text-danger');
+    $('#isOpen').addClass('text-success');
   }else{
     document.getElementById('isOpen').innerHTML = 'CLOSED';
+    $('#isOpen').removeClass('text-success');
+    $('#isOpen').addClass('text-danger');
   }
   newList = '';
 
@@ -85,6 +90,15 @@ function showSuccess(){
 
 function showFailure(){
   $('#idNumber').notify('Lab is closed!', {className: 'error', elementPosition: 'left middle', autoHideDelay: 1000});
+}
+
+function showUsersPresent(){
+  if(closing_attempts == 2){
+    $("#kickModal").modal('show');
+  }else{
+    $('#idNumber').notify('People are still present!', {className: 'error', elementPosition: 'left middle', autoHideDelay: 1000});
+    closing_attempts++;
+  }
 }
 
 function showRegistration(idNumber){

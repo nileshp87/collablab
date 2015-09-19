@@ -10,14 +10,16 @@ html(lang=en)
     script(src='js/collab.js')
   body
     .container
-      h1
-        | The lab is currently:&nbsp;
-        span(id='isOpen')
-          #{message}
-      br
-      br
-      h3
-        | <strong>Who's There?</strong>
-      ul
-        div(id='who')
+      .col-md-6.col-md-offset-3
+        h1
+          | The lab is currently&nbsp;
+          strong
+            span(id='isOpen') 
+                #{message}
+        br
+        br
+        h3
+          | <strong>Who's There?</strong>
+        ul
+          div(id='who')
     script(src='js/collab.js')
