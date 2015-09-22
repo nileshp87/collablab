@@ -118,13 +118,13 @@ function showFailure(){
 }
 
 function showUsersPresent(idNumber){
-  if(closing_attempts == 2){
+  if(closing_attempts == 1){
     $("#kickModal").modal('show');
     $("#hiddenId").val(idNumber);
     $("#password").focus();
     closing_attempts = 0;
   }else{
-    $('#idNumber').notify('People are still present!', {className: 'error', elementPosition: 'left middle', autoHideDelay: 1000});
+    $('#idNumber').notify('People are still present! Swipe again to close!', {className: 'error', elementPosition: 'left middle', autoHideDelay: 4000});
     closing_attempts++;
     setTimeout( function() {
       closing_attempts = 0;
@@ -310,7 +310,7 @@ function kickRemaining(){
     return false;
   }
   data = {'password':password, 'idNumber': id};
-  postData('/closeLab', data, function(statusCode){
+  postData('/closeLab', JSON.stringify(data), function(statusCode){
     switch(statusCode){
       case 0: closeLab(); break;
       case 1: wrongPassword(); break;

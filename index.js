@@ -68,22 +68,20 @@ internal.post('/swipe', function(req, res) {
 });
 
 internal.post('/closeLab', function(req, res){
-  if(req.body.idNumber != null && isValidId(req.body.idNumber && req.body.password != null)){
-    if(isLocked(req.body.idNumber)){
-      res.send('2').end();
-      return;
-    }
+  if(req.body.idNumber != null && isValidId(req.body.idNumber) && req.body.password != null){
     correctCreds(req.body.idNumber, req.body.password, function(){
+      console.log("success");
       res.send('0').end();
       labStatus.open = false;
       labStatus.members = {};
       names = [];
       delete failedLogins[req.body.idNumber];
     }, function(){
-
+      console.log("login failed");
       if(failedLogins[req.body.idNumber] != undefined){
         failedLogins[req.body.idNumber]['fails']++;
       }else{
+        failedLogins[req.body.idNumber] = {};
         failedLogins[req.body.idNumber]['fails'] = 0;
         failedLogins[req.body.idNumber]['time'] = new Date().getTime();
       }
@@ -152,8 +150,7 @@ function hash(password, salt){
   shasum = crypto.createHash('sha256');
   shasum.update(salt);
   shasum.update(password);
-//  return shasum.digest('hex');
-return password;
+  return shasum.digest('hex');
 }
 
 function setupRedis() {
@@ -198,6 +195,7 @@ function processSwipe(idNumber, res){
       labStatus.members[idNumber] = user;
       if(user.needsPassword == 'true'){
         res.send("4").end();
+        console.log(user);
       }else{
         res.send("0").end();
       }
@@ -292,7 +290,7 @@ function changePassword(req, res){
 }
 
 function setPassword(idNumber, password){
-  salt = crypto.randomBytes(8);
+  salt = crypto.randomBytes(8).asciiSlice();
   hashSum = hash(password, salt);
   client.hset(idNumber, 'password', hashSum);
   client.hset(idNumber, 'salt', salt);
