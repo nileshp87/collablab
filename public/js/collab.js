@@ -10,6 +10,26 @@ $('#registration').on('hidden.bs.modal', function() {
   $('#idNumber').focus();
 });
 
+$('#kickModal').on('hidden.bs.modal', function() {
+  $('#idNumber').focus();
+  $('#password').val('');
+});
+
+$('#kickModal').on('shown.bs.modal', function() {
+  $('#password').focus();
+});
+
+$('#passwordModal').on('hidden.bs.modal', function() {
+  $('#idNumber').focus();
+  $('#currentPassword').val('');
+  $('#newPassword').val('');
+  $('#repeatPassword').val('');
+});
+
+$('#passwordModal').on('shown.bs.modal', function() {
+  $('#currentPassword').focus();
+});
+
 function postData(url, data, callback){
     http = new XMLHttpRequest();
     http.open('POST', url, true);
@@ -20,6 +40,11 @@ function postData(url, data, callback){
         }
     }
     http.send(data);
+}
+
+function showNeedsPassword(idNumber){
+  $('#hiddenIdPassword').val(idNumber);
+  $('#passwordModal').modal('show');
 }
 
 function getData(url, callback){
@@ -42,12 +67,12 @@ function submitLogin(){
     data = JSON.stringify({'idNumber':idNumber});
     postData('/swipe', data,
     function(statusCode){
-        console.log(statusCode);
         switch(statusCode){
             case 0: showSuccess(); break;
             case 1: showFailure(); break;
             case 2: showRegistration(idNumber); break;
-            case 3: showUsersPresent(); break;
+            case 3: showUsersPresent(idNumber); break;
+            case 4: showNeedsPassword(idNumber); break;
             default: showFailure(); break;
         }
     });
@@ -84,21 +109,44 @@ function showBadRead(){
 }
 
 function showSuccess(){
-  $('#idNumber').notify('Swipe Successful!', {className: 'success', elementPosition: 'left middle', autoHideDelay: 1000});
+  $('#idNumber').notify('Success!', {className: 'success', elementPosition: 'left middle', autoHideDelay: 1000});
   getStatus();
 }
 
 function showFailure(){
-  $('#idNumber').notify('Lab is closed!', {className: 'error', elementPosition: 'left middle', autoHideDelay: 1000});
+  $('#idNumber').notify('Lab is closed!', {className: 'error', elementPosition: 'left middle', autoHideDelay: 2000});
 }
 
-function showUsersPresent(){
+function showUsersPresent(idNumber){
   if(closing_attempts == 2){
     $("#kickModal").modal('show');
+    $("#hiddenId").val(idNumber);
+    $("#password").focus();
+    closing_attempts = 0;
   }else{
     $('#idNumber').notify('People are still present!', {className: 'error', elementPosition: 'left middle', autoHideDelay: 1000});
     closing_attempts++;
+    setTimeout( function() {
+      closing_attempts = 0;
+    }, 30000);
   }
+}
+
+function closeLab() {
+  $('#kickModal').modal('hide');
+  $('#idNumber').notify('Lab has been closed!', {className: 'success', elementPosition: 'left middle', autoHideDelay: 1000});
+  getStatus();
+}
+
+function lockout() {
+  $('#kickModal').modal('hide');
+  $('#idNumber').notify('Your account has been locked!', {className: 'error', elementPosition: 'left middle', autoHideDelay: 10000});
+}
+
+function successPassword() {
+  $('#passwordModal').modal('hide');
+  $('#idNumber').notify('Password has been updated!', {className: 'success', elementPosition: 'left middle', autoHideDelay: 3000});
+  getStatus();
 }
 
 function showRegistration(idNumber){
@@ -106,8 +154,14 @@ function showRegistration(idNumber){
   document.getElementById('userIdNumber').value = idNumber;
 }
 
+function failedPassword(){
+  $('#currentPassword').val('');
+  $('#currentPassword').notify('Password is incorrect!', {className: 'error', elementPosition:'right'});
+  $('#currentPassword').focus();
+  $('#currentPasswordGroup').addClass('has-error');
+}
+
 function submitRegistration(){
-  console.log("called");
   name = $('#name').val().trim();
   newId = $('#userIdNumber').val().trim();
   approval = $('#approval').val().trim();
@@ -208,4 +262,59 @@ function onlyAlphabets(str) {
    } else {
        return false;
    }
+}
+
+function changePassword() {
+  var oldPassword = $('#currentPassword').val().trim();
+  var newPassword = $('#newPassword').val().trim();
+  var repeat = $('#repeatPassword').val().trim();
+  var idNumber = $('#hiddenIdPassword').val().trim();
+  console.log(idNumber);
+
+  if (oldPassword == ""){
+    $('#currentPassword').notify('Passwords field blank!', {className: 'error', elementPosition:'right'});
+    $('#currentPassword').focus();
+    $('#currentPasswordGroup').addClass('has-error');
+    return;
+  }
+  if(newPassword == ""){
+    $('#newPassword').notify('Passwords field blank!', {className: 'error', elementPosition:'right'});
+    $('#newPassword').focus();
+    $('#newPasswordGroup').addClass('has-error');
+    return;
+  }
+  if(repeat == "" || repeat != newPassword){
+    $('#repeatPassword').notify('Passwords do not match!', {className: 'error', elementPosition:'right'});
+    $('#repeatPassword').focus();
+    $('#repeatPasswordGroup').addClass('has-error');
+    return;
+  }
+  if(idNumber == ''){
+    $('#passwordModal').modal('hide');
+  }
+  var data = {'password':oldPassword, 'newPassword':newPassword, 'idNumber': idNumber};
+  console.log(data);
+  postData('/changePassword', JSON.stringify(data), function(statusCode){
+    switch(statusCode){
+      case 0: successPassword(); break;
+      case 1: failedPassword(); break;
+    }
+  });
+}
+
+function kickRemaining(){
+  var password = $("#password").val().trim();
+  var id = $("#hiddenId").val();
+  if(password == ""){
+    $("#password").focus();
+    return false;
+  }
+  data = {'password':password, 'idNumber': id};
+  postData('/closeLab', data, function(statusCode){
+    switch(statusCode){
+      case 0: closeLab(); break;
+      case 1: wrongPassword(); break;
+      case 2: lockout(); break;
+    }
+  });
 }

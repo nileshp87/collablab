@@ -28,7 +28,7 @@ html(lang=en)
       .modal-dialog
         .modal-content
           .modal-header
-            button(type='button', class='close', data-dismiss='modal')
+            button(type='button', class='close', data-dismiss='registration')
             h3 Register Yourself
               br
               small &nbsp;&nbsp;Fill out the fields to register
@@ -53,6 +53,52 @@ html(lang=en)
                 button.btn.btn-lg.btn-danger.btn-block(onClick='cancelRegistration()') Cancel Registration
               .col-md-6
                 button.btn.btn-lg.btn-primary.btn-block(onClick='submitRegistration()') Submit Registration
+
+    #kickModal.modal.fade(aria-hidden='true', tabindex='-1', role='dialog', aria-labelledby='kickingLabel')
+      .modal-dialog.modal-md
+        .modal-content
+          .modal-header
+            button(type='button', class='close', data-dismiss='kickModal')
+            h3 Kick Remaining Users?
+              br
+              small Confirm the other users have left, and you may forcibly close the lab.
+          .modal-body
+            form.form-horizontal(role='form', id='kickForm', onsubmit='return false;')
+              #kickPasswordGroup.form-group
+                label.col-md-offset-1.col-md-4.control-label(for='password') Lab Monitor Password
+                .col-md-5
+                  input.form-control(type='password', placeholder='Password' id='password')
+              input.hidden(type='text', id='hiddenId')
+              .form-group
+                .col-md-10.col-md-offset-1
+                  button.btn.btn-lg.btn-danger.btn-block(type='submit' onClick='kickRemaining()') Kick Remaining Users
+
+    #passwordModal.modal.fade(aria-hidden='true', tabindex='-1', role='dialog', aria-labelledby='kickingLabel')
+      .modal-dialog.modal-md
+        .modal-content
+          .modal-header
+            button(type='button', class='close', data-dismiss='kickModal')
+            h3 Set Your Password
+              br
+              small All lab monitors must have a password set to open/close the lab
+          .modal-body
+            form.form-horizontal(role='form', id='passwordForm', onsubmit='return false;')
+              #currentPasswordGroup.form-group
+                label.col-md-offset-1.col-md-4.control-label(for='currentPassword') Your Current Password
+                .col-md-5
+                  input.form-control(type='password', placeholder='Password' id='currentPassword')
+              #newPasswordGroup.form-group
+                label.col-md-offset-1.col-md-4.control-label(for='newPassword') New Password
+                .col-md-5
+                  input.form-control(type='password', placeholder='New Password' id='newPassword')
+              #repeatPasswordGroup.form-group
+                label.col-md-offset-1.col-md-4.control-label(for='repeatPassword') Confirm New Password
+                .col-md-5
+                  input.form-control(type='password', placeholder='Confirm New Password' id='repeatPassword')
+              input.hidden(type='text', id='hiddenIdPassword')
+              .form-group
+                .col-md-10.col-md-offset-1
+                  button.btn.btn-lg.btn-warning.btn-block(type='submit' onClick='changePassword()') Change Your Password
 
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js')
     script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js')

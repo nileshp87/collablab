@@ -6,7 +6,9 @@ var cookieParser = require('cookie-parser');
 var cookieSession = require('cookie-session');
 
 var config = require('./config');
+var crypto = require('crypto');
 
+var failedLogins = {};
 var labStatus = {
   open: false,
   members: {}
@@ -65,8 +67,50 @@ internal.post('/swipe', function(req, res) {
   }
 });
 
+internal.post('/closeLab', function(req, res){
+  if(req.body.idNumber != null && isValidId(req.body.idNumber && req.body.password != null)){
+    if(isLocked(req.body.idNumber)){
+      res.send('2').end();
+      return;
+    }
+    correctCreds(req.body.idNumber, req.body.password, function(){
+      res.send('0').end();
+      labStatus.open = false;
+      labStatus.members = {};
+      names = [];
+      delete failedLogins[req.body.idNumber];
+    }, function(){
+
+      if(failedLogins[req.body.idNumber] != undefined){
+        failedLogins[req.body.idNumber]['fails']++;
+      }else{
+        failedLogins[req.body.idNumber]['fails'] = 0;
+        failedLogins[req.body.idNumber]['time'] = new Date().getTime();
+      }
+
+      var time = new Date().getTime() - failedLogins[req.body.idNumber]['time'] < config.lockoutLength * 1000;
+      var fails = failedLogins[req.body.idNumber]['fails'] > config.failsBeforeLockout;
+      if(time && fails){
+        res.send('2').end();
+        return;
+      }
+      if(fails && !time){
+        failedLogins[req.body.idNumber]['fails'] = 1;
+        failedLogins[req.body.idNumber]['time'] = new Date().getTime();
+      }
+      res.send('1').end();
+      return;
+    });
+  }else{
+    res.end();
+  }
+});
+
+internal.post('/changePassword', changePassword);
+external.post('/changePassword', changePassword);
+
 internal.get('/status', function(req, res) {
-  res.send(JSON.stringify({"open":labStatus.open, "members":names}));
+  res.send(JSON.stringify({"open":labStatus.open, "members":names})).end();
 });
 
 client.on('ready', function() {
@@ -78,16 +122,38 @@ client.on('ready', function() {
 
 internal.get('/manage', getManage);
 external.get('/manage', getManage);
-
-internal.get('/login', getLogin);
-external.get('/login', getLogin);
+external.post('/login', postLogin);
 
 function getManage(req, res){
   res.render('manage');
 }
 
-function getLogin(req, res){
-  res.render('login');
+function postLogin(req, res){
+
+}
+
+function correctCreds(idNumber, password, success, failure){
+  client.hgetall(idNumber, function(error, replies){
+    if(replies == null){
+      return false;
+    }
+    console.log(hash(password, replies.salt));
+    console.log(replies.password);
+
+    if(replies.password == hash(password, replies.salt)){
+      success();
+    }else{
+      failure();
+    }
+  });
+}
+
+function hash(password, salt){
+  shasum = crypto.createHash('sha256');
+  shasum.update(salt);
+  shasum.update(password);
+//  return shasum.digest('hex');
+return password;
 }
 
 function setupRedis() {
@@ -104,11 +170,14 @@ function createUser(idNumber, name, labMonitor, exec, admin){
   client.hset(idNumber, "labMonitor", labMonitor);
   client.hset(idNumber, "exec", exec);
   client.hset(idNumber, "admin", admin);
+  setPassword(idNumber, config.defaultLabMonitorPassword);
+  client.hset(idNumber, "needsPassword", labMonitor || exec || admin);
   return {"idNumber":idNumber,
           "name": name,
           "labMonitor": labMonitor,
           "exec": exec,
-          "admin": admin
+          "admin": admin,
+          "needsPassword": labMonitor || exec || admin
         };
 }
 
@@ -127,8 +196,12 @@ function processSwipe(idNumber, res){
 
     if(labStatus.members[idNumber] == undefined){
       labStatus.members[idNumber] = user;
+      if(user.needsPassword == 'true'){
+        res.send("4").end();
+      }else{
+        res.send("0").end();
+      }
       labStatus.open = true;
-      res.send("0").end();
       names.push(user.name);
       return;
     }
@@ -192,4 +265,37 @@ function onlyAlphabets(str) {
    } else {
        return false;
    }
+}
+
+function changePassword(req, res){
+  oldPassword = req.body.password;
+  newPassword = req.body.newPassword;
+  idNumber = req.body.idNumber;
+  console.log(oldPassword);
+  if(oldPassword == null || newPassword == null || idNumber == null){
+    res.close();
+    return;
+  }
+  if(isValidId(idNumber)){
+    correctCreds(idNumber, oldPassword, function(){
+      setPassword(idNumber, newPassword);
+      res.send('0').end();
+      return;
+    }, function(){
+      console.log(idNumber);
+      res.send('1').end();
+      return;
+    });
+  }else{
+    res.send('1').end();
+  }
+}
+
+function setPassword(idNumber, password){
+  salt = crypto.randomBytes(8);
+  hashSum = hash(password, salt);
+  client.hset(idNumber, 'password', hashSum);
+  client.hset(idNumber, 'salt', salt);
+  client.hset(idNumber, 'needsPassword', 'false');
+  return true;
 }
