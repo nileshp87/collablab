@@ -75,29 +75,13 @@ internal.post('/closeLab', function(req, res){
       labStatus.open = false;
       labStatus.members = {};
       names = [];
-      delete failedLogins[req.body.idNumber];
     }, function(){
       console.log("login failed");
-      if(failedLogins[req.body.idNumber] != undefined){
-        failedLogins[req.body.idNumber]['fails']++;
-      }else{
-        failedLogins[req.body.idNumber] = {};
-        failedLogins[req.body.idNumber]['fails'] = 0;
-        failedLogins[req.body.idNumber]['time'] = new Date().getTime();
-      }
-
-      var time = new Date().getTime() - failedLogins[req.body.idNumber]['time'] < config.lockoutLength * 1000;
-      var fails = failedLogins[req.body.idNumber]['fails'] > config.failsBeforeLockout;
-      if(time && fails){
+      if(isLocked(req.body.idNumber)){
         res.send('2').end();
-        return;
+      }else{
+        res.send('1').end();
       }
-      if(fails && !time){
-        failedLogins[req.body.idNumber]['fails'] = 1;
-        failedLogins[req.body.idNumber]['time'] = new Date().getTime();
-      }
-      res.send('1').end();
-      return;
     });
   }else{
     res.end();
@@ -127,7 +111,18 @@ function getManage(req, res){
 }
 
 function postLogin(req, res){
+  var idNumber = req.body.idNumber;
+  var password = req.body.password;
 
+  if(idNumber != null && isValidId(idNumber)){
+    correctCreds(idNumber, password, function(){
+      res.send('0').end();
+    }, function() {
+      res.send('1').end();
+    });
+  }else{
+    res.end();
+  }
 }
 
 function correctCreds(idNumber, password, success, failure){
@@ -135,15 +130,34 @@ function correctCreds(idNumber, password, success, failure){
     if(replies == null){
       return false;
     }
-    console.log(hash(password, replies.salt));
-    console.log(replies.password);
-
     if(replies.password == hash(password, replies.salt)){
+      delete failedLogins[req.body.idNumber];
       success();
     }else{
+      if(failedLogins[req.body.idNumber] != undefined){
+        failedLogins[req.body.idNumber]['fails']++;
+      }else{
+        failedLogins[req.body.idNumber] = {};
+        failedLogins[req.body.idNumber]['fails'] = 0;
+        failedLogins[req.body.idNumber]['time'] = new Date().getTime();
+      }
+
+      var time = new Date().getTime() - failedLogins[req.body.idNumber]['time'] < config.lockoutLength * 1000;
+      var fails = failedLogins[req.body.idNumber]['fails'] > config.failsBeforeLockout;
+
+      if(fails && !time){
+        failedLogins[req.body.idNumber]['fails'] = 1;
+        failedLogins[req.body.idNumber]['time'] = new Date().getTime();
+      }
       failure();
     }
   });
+}
+
+function isLocked(idNumber){
+  var time = new Date().getTime() - failedLogins[idNumber]['time'] < config.lockoutLength * 1000;
+  var fails = failedLogins[idNumber]['fails'] > config.failsBeforeLockout;
+  return time && fails;
 }
 
 function hash(password, salt){
