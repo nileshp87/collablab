@@ -15,18 +15,46 @@ html(lang=en)
             small
               | Enter credentials to enter portal
           .form-group
-            label.col-md-4.control-label(for='idNumber') Your ID Number
+            label.col-md-4.control-label(for='idNumber') Your ID Number or Username
             .col-md-7
-              input.form-control(type='text', placeholder='Swipe or Type User ID', autofocus='', id='idNumber')
+              input.form-control(type='text', placeholder='Swipe or Type ID Number or Username', autofocus='', id='idNumber')
           .form-group
             label.col-md-4.control-label(for='password') Your Password
             .col-md-7
-              input.form-control(type='password', placeholder='Enter Password', id='idNumber')
+              input.form-control(type='password', placeholder='Enter Password', id='password')
           .col-md-12
-            .col-md-5.col-md-offset-1
+            .col-md-5.col-md-push-6
+              button.btn.btn-lg.btn-primary.btn-block(type='submit', onClick='login()') Login
+            .col-md-5.col-md-offset-1.col-md-pull-5
               button.btn.btn-lg.btn-danger.btn-block(type='submit', onClick='cancelLogin()') Cancel Login
-            .col-md-5
-              button.btn.btn-lg.btn-primary.btn-block(type='submit', onClick='submitLogin()') Login
+    #passwordModal.modal.fade(aria-hidden='true', tabindex='-1', role='dialog', aria-labelledby='kickingLabel')
+      .modal-dialog.modal-md
+        .modal-content
+          .modal-header
+            button(type='button', class='close', data-dismiss='kickModal')
+            h3 Set Your Password
+              br
+              small All lab monitors must have a password set to open/close the lab
+          .modal-body
+            form.form-horizontal(role='form', id='passwordForm', onsubmit='return false;')
+              #currentPasswordGroup.form-group
+                label.col-md-offset-1.col-md-4.control-label(for='currentPassword') Your Current Password
+                .col-md-5
+                  input.form-control(type='password', placeholder='Password' id='currentPassword')
+              #newPasswordGroup.form-group
+                label.col-md-offset-1.col-md-4.control-label(for='newPassword') New Password
+                .col-md-5
+                  input.form-control(type='password', placeholder='New Password' id='newPassword')
+              #repeatPasswordGroup.form-group
+                label.col-md-offset-1.col-md-4.control-label(for='repeatPassword') Confirm New Password
+                .col-md-5
+                  input.form-control(type='password', placeholder='Confirm New Password' id='repeatPassword')
+              .form-group
+                .col-md-10.col-md-offset-1
+                  button.btn.btn-lg.btn-warning.btn-block(type='submit' onClick='changePassword()') Change Your Password
+
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js')
     script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js')
-    script(src='js/collab.js')
+    script(src='js/notify.js')
+    script(src='js/common.js')
+    script(src='js/manage.js')

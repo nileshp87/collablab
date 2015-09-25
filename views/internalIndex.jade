@@ -1,7 +1,7 @@
 doctype html
 html(lang=en)
   head
-    title WPI Collablab - #{title}
+    title WPI Collablab - Lab Swiper
     link(href='css/signin.css', rel='stylesheet')
     link(href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css', rel='stylesheet')
     link(href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css', rel='stylesheet')
@@ -12,10 +12,9 @@ html(lang=en)
           | The lab is currently&nbsp;
           strong
             span(id='isOpen') 
-              #{message}
         form.form-signin(role='form' onsubmit="return false;")
           h2.form-signin-heading Swipe to Enter Lab
-          input.form-control(type='text', placeholder='Swipe or Type User ID', autofocus='', id='idNumber')
+          input.form-control(type='text', placeholder='Swipe or Type User ID or Username', autofocus='', id='idNumber')
           button.btn.btn-lg.btn-primary.btn-block(type='submit', onClick='submitLogin()') Submit
         br
         br
@@ -38,6 +37,10 @@ html(lang=en)
                 label.col-md-offset-2.col-md-4.control-label(for='name') Your Full Name
                 .col-md-6
                   input.form-control(type='text', placeholder='Your full name', id='name')
+              #usernameGroup.form-group
+                label.col-md-offset-2.col-md-4.control-label(for='username') Your Username
+                .col-md-6
+                  input.form-control(type='text', placeholder='Your username', id='username')
               #userIdNumberGroup.form-group
                 label.col-md-offset-2.col-md-4.control-label(for='userIdNumber') Your ID Number
                 .col-md-6
@@ -46,6 +49,10 @@ html(lang=en)
                 label.col-md-offset-2.col-md-4.control-label(for='approval') Lab Monitor's ID Number
                 .col-md-6
                   input.form-control(type='text', placeholder='Enter a Lab Monitor ID Number', id='approval')
+                  #approvalGroup.form-group
+                label.col-md-offset-2.col-md-4.control-label(for='passphrase') Group Passphrase (Ignore)
+                .col-md-6
+                  input.form-control(type='password', placeholder='Enter Your Group\'s Passphrase', id='passphrase')
               input.hidden(type='submit', onClick='submitRegistration()')
           .modal-footer
             .form-group
@@ -95,7 +102,6 @@ html(lang=en)
                 label.col-md-offset-1.col-md-4.control-label(for='repeatPassword') Confirm New Password
                 .col-md-5
                   input.form-control(type='password', placeholder='Confirm New Password' id='repeatPassword')
-              input.hidden(type='text', id='hiddenIdPassword')
               .form-group
                 .col-md-10.col-md-offset-1
                   button.btn.btn-lg.btn-warning.btn-block(type='submit' onClick='changePassword()') Change Your Password
@@ -103,4 +109,5 @@ html(lang=en)
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js')
     script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js')
     script(src='js/notify.js')
-    script(src='js/collab.js')
+    script(src='js/common.js')
+    script(src='js/internal.js')

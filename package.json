@@ -10,9 +10,9 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.14.0",
-    "cookie-parser": "^1.4.0",
-    "cookie-session": "^1.2.0",
+    "connect-redis": "^2.5.1",
     "express": "^4.13.3",
+    "express-session": "^1.11.3",
     "jade": "^1.11.0",
     "redis": "^1.0.0"
   }
