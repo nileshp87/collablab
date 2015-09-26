@@ -158,7 +158,7 @@ function submitRegistration(){
     return false;
   }
 
-  if(!onlyAlphabets(name)){
+  if(!isValidName(name)){
     addError('name','Name can only contain a-z, A-Z!');
     return false;
   }
@@ -214,15 +214,6 @@ function submitRegistration(){
         }
   });
   return false;
-}
-
-function onlyAlphabets(str) {
-   var regex = /^[a-zA-Z\s]*$/;
-   if (regex.test(str)) {
-       return true;
-   } else {
-       return false;
-   }
 }
 
 function changePassword() {
