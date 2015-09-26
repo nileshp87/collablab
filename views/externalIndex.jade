@@ -18,8 +18,11 @@ html(lang=en)
         br
         br
         h3
-          | <strong>Who's There?</strong>
-        ul
-          div(id='who')
+          .panel.panel-primary
+            .panel-heading Who is in the lab?
+            .panel-body
+              h4
+                ul.list-group
+                  div(id='who')
     script(src='js/common.js')
     script(src='js/external.js')

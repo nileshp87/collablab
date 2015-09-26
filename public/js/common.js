@@ -63,7 +63,7 @@ function isValidUsername(username){
 };
 
 function isValidName(str) {
-  var regex = /^[a-zA-Z\s]*$/;
+  var regex = /^[a-zA-Z'-\s]*$/;
   return regex.test(str);
 };
 
