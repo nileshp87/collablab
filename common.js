@@ -46,7 +46,6 @@ common.idNumberInRequest = function(req, res, next){
   if(common.isValidId(req.body.idNumber)){
     userManagement.getUser(req.body.idNumber, function(user){
       req.user = user;
-      console.log(user);
       next();
     }, function(){
       res.send('2').end();

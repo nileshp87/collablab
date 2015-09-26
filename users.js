@@ -16,11 +16,8 @@ router.use(session({
   saveUninitialized: false
 }));
 
-//router.use(cookieParser(config.cookieSecret));
-//router.use(cookieSession({secret: config.cookieSecret, name: 'collab'}));
-
 router.post('/changePassword', common.authInRequest, function(req, res){
-  if(req.body.newPassword != null && req.body.newPassword > 4){
+  if(req.body.newPassword != null && req.body.newPassword.length > 4){
     userManagement.setPassword(req.user.idNumber, req.body.newPassword);
     res.send('0').end();
   }else{
@@ -44,7 +41,6 @@ router.post('/register', function(req, res){
   var idNumber = req.body.newId;
   var approverId = req.body.approverId;
   var passphrase = req.body.passphrase || '';
-  console.log(passphrase);
   if(passphrase != '' && passphraseIsValid(passphrase)){
     userManagement.createUser(idNumber, username, name, passphrase,
        passphrase == config.labMonitorPassphrase,
@@ -63,10 +59,8 @@ router.post('/register', function(req, res){
 
   if(common.isValidId(idNumber) && common.isValidId(approverId) &&
     common.isValidUsername(username) && common.isValidName(name)){
-      console.log("hit");
       userManagement.getUser(approverId, function(approver){
         if(approver.labMonitor == 'true'){
-          console.log("hit2");
           userManagement.createUser(idNumber, username, name, idNumber, false, false, false,
              function(){
               res.send('0').end();

@@ -9,18 +9,26 @@ $('#registration').on('hidden.bs.modal', function() {
   $('#name').val('');
   $('#userIdNumber').val('');
   $('#approval').val('');
+  $('#passphrase').val('');
+  $('#username').val('');
   $("#approval").removeClass('has-error');
   $("#userIdNumber").removeClass('has-error');
+  $("#passphrase").removeClass('has-error');
+  $("#username").removeClass('has-error');
 });
 
-$('#kickModal').on('hidden.bs.modal', function() {
+$('#closeModal').on('hidden.bs.modal', function() {
   $('#idNumber').focus();
   $('#password').val('');
   $("#password").removeClass('has-error');
 });
 
-$('#kickModal').on('shown.bs.modal', function() {
+$('#closeModal').on('shown.bs.modal', function() {
   $('#password').focus();
+});
+
+$('#kickModal').on('hidden.bs.modal', function(){
+  $('#idNumber').val('');
 });
 
 $('#passwordModal').on('hidden.bs.modal', function() {
@@ -42,19 +50,24 @@ function showNeedsPassword(idNumber){
 }
 
 function submitLogin(){
-    idNumber = document.getElementById('idNumber').value;
+    hideModals();
+    var idNumber = document.getElementById('idNumber').value;
+    var convertedId = convertSwipe(idNumber);
     document.getElementById('idNumber').value = '';
-    if(!isValidId(idNumber) && !isValidUsername(idNumber)){
+    if(!isValidId(convertedId) && !isValidUsername(idNumber)){
         showMessage('Please try again!', 3000, 'error');
         return;
     }
-    swipe(idNumber);
+    if(convertedId){
+      swipe(convertedId);
+    }else{
+      swipe(idNumber);
+    }
     document.getElementById('idNumber').focus();
     return false;
 }
 
 function swipe(idNumber){
-  console.log(idNumber);
   data = JSON.stringify({'idNumber':idNumber});
   postData('/lab/swipe', data,
   function(statusCode){
@@ -113,10 +126,18 @@ function failedPassword(){
 
 function submitRegistration(){
   var name = $('#name').val().trim();
-  var newId = $('#userIdNumber').val().trim();
-  var approval = $('#approval').val().trim();
+  var newId = convertSwipe($('#userIdNumber').val().trim());
+  var approval = convertSwipe($('#approval').val().trim());
   var username = $('#username').val().trim();
   var passphrase = $('#passphrase').val().trim();
+
+  if(isValidId(newId)){
+    $('#userIdNumber').val(newId);
+  }
+
+  if(isValidId(approval)){
+    $('#approval').val(approval);
+  }
 
   if(name == ''){
     addError('name', 'Name is a required field!');
@@ -167,10 +188,8 @@ function submitRegistration(){
   }
 
   data = JSON.stringify({'newId':newId, 'name':name, 'approverId': approval, 'username': username, 'passphrase': passphrase});
-  console.log(data);
   postData('/users/register', data,
     function(statusCode){
-        console.log(statusCode);
         switch(statusCode){
             case 0:
                 hideModals();
@@ -211,7 +230,6 @@ function changePassword() {
   var newPassword = $('#newPassword').val().trim();
   var repeat = $('#repeatPassword').val().trim();
   var idNumber = $('#hiddenId').val().trim();
-  console.log(idNumber);
 
   if (oldPassword == ""){
     $('#currentPassword').notify('Passwords field blank!', {className: 'error', elementPosition:'right'});
@@ -239,7 +257,6 @@ function changePassword() {
     $('#repeatPassword').val('');
   }
   var data = {'password':oldPassword, 'newPassword':newPassword, 'idNumber': idNumber};
-  console.log(data);
   postData('/users/changePassword', JSON.stringify(data), function(statusCode){
     switch(statusCode){
       case 0: showMessage(); hideModals(); break;
@@ -263,4 +280,10 @@ function kickRemaining(){
       case 2: hideModals(); showMessage('Your account has been locked!', 5000, 'error'); break;
     }
   });
+}
+
+function kick(username){
+  $("#kickName").html(labStatus.members[username]);
+  $("#kickModal").modal();
+  $('#idNumber').val(username);
 }

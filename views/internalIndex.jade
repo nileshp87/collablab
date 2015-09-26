@@ -19,10 +19,12 @@ html(lang=en)
         br
         br
         h3
-          strong Who's Here?
-        h4
-          ul
-            div(id='who')
+          .panel.panel-primary
+            .panel-heading Who is in the lab? (Click to kick)
+            .panel-body
+              h4
+                ul.list-group
+                  div(id='who')
     #registration.modal.fade(aria-hidden='true', tabindex='-1', role='dialog', aria-labelledby='registrationLabel')
       .modal-dialog
         .modal-content
@@ -61,16 +63,16 @@ html(lang=en)
               .col-md-6
                 button.btn.btn-lg.btn-primary.btn-block(onClick='submitRegistration()') Submit Registration
 
-    #kickModal.modal.fade(aria-hidden='true', tabindex='-1', role='dialog', aria-labelledby='kickingLabel')
+    #closeModal.modal.fade(aria-hidden='true', tabindex='-1', role='dialog', aria-labelledby='kickingLabel')
       .modal-dialog.modal-md
         .modal-content
           .modal-header
-            button(type='button', class='close', data-dismiss='kickModal')
+            button(type='button', class='close', data-dismiss='closeModal')
             h3 Kick Remaining Users?
               br
               small Confirm the other users have left, and you may forcibly close the lab.
           .modal-body
-            form.form-horizontal(role='form', id='kickForm', onsubmit='return false;')
+            form.form-horizontal(role='form', id='closeForm', onsubmit='return false;')
               #kickPasswordGroup.form-group
                 label.col-md-offset-1.col-md-4.control-label(for='password') Lab Monitor Password
                 .col-md-5
@@ -79,7 +81,20 @@ html(lang=en)
               .form-group
                 .col-md-10.col-md-offset-1
                   button.btn.btn-lg.btn-danger.btn-block(type='submit' onClick='kickRemaining()') Kick Remaining Users
-
+                  
+    #kickModal.modal.fade(aria-hidden='true', tabindex='-1', role='dialog', aria-labelledby='kickingLabel')
+      .modal-dialog.modal-md
+        .modal-content
+          .modal-header
+            button(type='button', class='close', data-dismiss='kickModal')
+            h3 Confirm that you want to kick&nbsp;
+              span(id='kickName')
+              br
+              small Confirm that you want to kick the user.
+          .modal-body
+            button.btn.btn-lg.btn-danger.btn-block(type='submit' onClick='submitLogin()') Kick
+            
+                  
     #passwordModal.modal.fade(aria-hidden='true', tabindex='-1', role='dialog', aria-labelledby='kickingLabel')
       .modal-dialog.modal-md
         .modal-content

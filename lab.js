@@ -49,8 +49,6 @@ function processSwipe(user, res){
       }
     }else{
       var numLabMonitors = countLabMonitorsInLab();
-      console.log(numLabMonitors);
-      console.log(names.length);
       if(numLabMonitors > 1 || user.labMonitor == 'false' || Object.keys(names).length == 1){
         swipeOut(user)
       }else{
@@ -65,7 +63,7 @@ function processSwipe(user, res){
 function swipeIn(user){
   labStatus.members[user.idNumber] = user;
   labStatus.open = true;
-  names[user.idNumber] = toDisp(user);
+  names[user.username] = toDisp(user);
 }
 
 function toDisp(user){
@@ -74,7 +72,7 @@ function toDisp(user){
 
 function swipeOut(user){
   delete labStatus.members[user.idNumber];
-  delete names[user.idNumber];
+  delete names[user.username];
 }
 
 function countLabMonitorsInLab(){

@@ -42,12 +42,11 @@ function updatePage(newStatus, internal){
   var newList = '';
   if(internal){
     for(index in newStatus.members){
-      newList += "<li>" + newStatus.members[index] + "&nbsp;<button onClick=\"swipe('" +
-      index + "')\" class=\"btn btn-danger btn-xs\"><span class=\"glyphicon glyphicon-remove\"></span></button> </li>";
+      newList += "<button class=\"list-group-item\" onClick=\"kick('" + index +"')\">" + newStatus.members[index] +"</button>";
     }
   }else{
     for(index in newStatus.members){
-      newList += '<li>' + newStatus.members[index] + '</li>';
+      newList += "<li class=\"list-group-item\">" + newStatus.members[index] + '</li>';
     }
   }
   labStatus = newStatus;
@@ -74,4 +73,20 @@ function addError(idName, error){
   $('#'+idName).focus();
   $('#'+idName + 'Group').addClass('has-error');
   $('#'+idName).val('');
+}
+
+function convertSwipe(idNumber){
+  if(isValidId(idNumber)){
+    return idNumber;
+  }
+  if(idNumber.length < 12){
+    return '';
+  }
+  if(idNumber[0] == '%'){
+    var id = idNumber.match(/[\d]{9}/);
+    if(id.length > 0){
+      return id[0];
+    }
+  }
+  return '';
 }
