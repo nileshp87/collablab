@@ -41,18 +41,23 @@ router.post('/register', function(req, res){
   var idNumber = req.body.newId;
   var approverId = req.body.approverId;
   var passphrase = req.body.passphrase || '';
-  if(passphrase != '' && passphraseIsValid(passphrase)){
+  if(passphrase != '' && common.passphraseIsValid(passphrase)){
     userManagement.createUser(idNumber, username, name, passphrase,
        passphrase == config.labMonitorPassphrase,
        passphrase == config.execPassphrase,
        passphrase == config.adminPassphrase,
        function(){
-        res.send('0').end();
-      }, function(){
-        res.send('1').end();
-    });
+         res.send('0').end();
+         return;
+       }, function(error){
+         if(error.message == "Username taken"){
+           res.send('3').end();
+         }else{
+           res.send('1').end();
+         }
+       });
     return;
-  }else if(passphrase != '' && !passphraseIsValid(passphrase)){
+  }else if(passphrase != '' && !common.passphraseIsValid(passphrase)){
     res.send('4').end();
     return;
   }
@@ -64,8 +69,12 @@ router.post('/register', function(req, res){
           userManagement.createUser(idNumber, username, name, idNumber, false, false, false,
              function(){
               res.send('0').end();
-            }, function(){
-              res.send('1').end();
+            }, function(error){
+              if(error.message == "Username taken"){
+                res.send('3').end();
+              }else{
+                res.send('1').end();
+              }
             });
         }
       }, function(){
@@ -74,10 +83,5 @@ router.post('/register', function(req, res){
     }
 });
 
-function passphraseIsValid(passphrase){
-  return passphrase == config.labMonitorPassphrase ||
-  passphrase == config.execPassphrase ||
-  passphrase == config.adminPassphrase;
-}
 
 module.exports = router;

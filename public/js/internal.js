@@ -11,16 +11,16 @@ $('#registration').on('hidden.bs.modal', function() {
   $('#approval').val('');
   $('#passphrase').val('');
   $('#username').val('');
-  $("#approval").removeClass('has-error');
-  $("#userIdNumber").removeClass('has-error');
-  $("#passphrase").removeClass('has-error');
-  $("#username").removeClass('has-error');
+  $("#approvalGroup").removeClass('has-error');
+  $("#userIdNumberGroup").removeClass('has-error');
+  $("#passphraseGroup").removeClass('has-error');
+  $("#usernameGroup").removeClass('has-error');
 });
 
 $('#closeModal').on('hidden.bs.modal', function() {
   $('#idNumber').focus();
   $('#password').val('');
-  $("#password").removeClass('has-error');
+  $("#passwordGroup").removeClass('has-error');
 });
 
 $('#closeModal').on('shown.bs.modal', function() {
@@ -36,12 +36,17 @@ $('#passwordModal').on('hidden.bs.modal', function() {
   $('#currentPassword').val('');
   $('#newPassword').val('');
   $('#repeatPassword').val('');
-  $("#currentPassword").removeClass('has-error');
-  $("#repeatPassword").removeClass('has-error');
+  $("#currentPasswordGroup").removeClass('has-error');
+  $("#repeatPasswordGroup").removeClass('has-error');
+  $('#currentPasswordGroup').removeClass('hidden');
 });
 
 $('#passwordModal').on('shown.bs.modal', function() {
-  $('#currentPassword').focus();
+  if($('#currentPassword').val() != ''){
+    $('#newPassword').focus();
+  }else{
+    $('#currentPassword').focus();
+  }
 });
 
 function showNeedsPassword(idNumber){
@@ -72,7 +77,7 @@ function swipe(idNumber){
   postData('/lab/swipe', data,
   function(statusCode){
       switch(statusCode){
-          case 0: showMessage('Swipe success!'); break;
+          case 0: showMessage('Success!'); break;
           case 1: showMessage('Lab is currently closed!', 2000, 'error'); break;
           case 2: showRegistration(idNumber); break;
           case 3: showUsersPresent(idNumber); break;
@@ -194,6 +199,12 @@ function submitRegistration(){
             case 0:
                 hideModals();
                 showMessage('You\'ve successfully registered! :), give it a shot!', 4000);
+                if(passphrase != ''){
+                  $('#currentPassword').val(passphrase);
+                  $('#currentPasswordGroup').addClass('hidden');
+                  $('#idNumber').val(newId);
+                  submitLogin();
+                }
                 break;
 
             case 2:

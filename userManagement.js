@@ -8,10 +8,10 @@ failedLogins = {};
 
 userManagement.setPassword = function(idNumber, password, needsPassword){
   needsPassword = needsPassword || false;
-  var salt = crypto.randomBytes(8).asciiSlice();
+  var salt = crypto.randomBytes(8).toString('hex');
   var hashSum = hash(password, salt);
   client.hset(idNumber, 'password', hashSum);
-  client.hset(idNumber, 'salt', JSON.stringify(salt));
+  client.hset(idNumber, 'salt', salt);
   client.hset(idNumber, 'needsPassword', needsPassword);
   return true;
 };
@@ -31,7 +31,7 @@ userManagement.getUserByUsername = function(username, success, failure){
   success = success || function(){};
   failure = failure || function(){};
 
-  client.hget('users', username, function(error, idNumber){
+  client.hget('users', username.toLowerCase(), function(error, idNumber){
     if(idNumber == null){
       failure(new Error('User does not exist'));
       return;
@@ -90,7 +90,7 @@ userManagement.correctCreds = function(idNumber, password, success, failure){
     if(user == null){
       return false;
     }
-    if(user.password == hash(password, JSON.parse(user.salt))){
+    if(user.password == hash(password, user.salt)){
       delete failedLogins[idNumber];
       success(user);
     }else{
@@ -129,7 +129,7 @@ userManagement.isLocked = function(idNumber){
 userManagement.isUsernameAvailable = function(username, yes, no){
   yes = yes || function(){};
   no = no || function(){};
-  client.hexists('users', username, function(error, reply){
+  client.hexists('users', username.toLowerCase(), function(error, reply){
     if(reply == 0){
       yes();
     }else{
@@ -155,6 +155,27 @@ userManagement.delete = function(idNumber, success){
 
 userManagement.clear = function(after){
   client.flushall(after);
+};
+
+userManagement.grantByIdNumber = function(grant, user, success, failure){
+  success = success || function() {};
+  failure = failure || function() {};
+  userManagement.doesUserExist(user, function(){
+    client.hset(user, grant, 'true');
+    success();
+    }, failure
+  );
+};
+
+userManagement.grantByUsername = function(grant, username, success, failure){
+  userManagement.getUserByUsername(username, function(user){
+    userManagement.grantByIdNumber(grant, user.idNumber, success, faiure);
+      }, failure
+  );
+};
+
+userManagement.changeNickname = function(idNumber, newNickname){
+  client.hset(idNumber, 'nickname', newNickname);
 };
 
 function hash(password, salt){

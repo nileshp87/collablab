@@ -71,4 +71,20 @@ common.loggedIn = function(req, res, next){
   }
 };
 
+common.passphraseIsValid = function (passphrase){
+  return passphrase != null && (
+    passphrase == config.labMonitorPassphrase ||
+    passphrase == config.execPassphrase ||
+    passphrase == config.adminPassphrase);
+};
+
+common.getGrantFromPassphrase = function(passphrase){
+  switch(passphrase){
+    case config.labMonitorPassphrase: return 'labMonitor';
+    case config.execPassphrase: return 'exec';
+    case config.adminPassphrase: return 'admin';
+    default: return false;
+  }
+}
+
 module.exports = common;

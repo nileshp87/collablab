@@ -67,7 +67,7 @@ function swipeIn(user){
 }
 
 function toDisp(user){
-  return user.name + ' (' + user.displayName + ')';
+  return user.name;
 }
 
 function swipeOut(user){
