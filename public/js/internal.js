@@ -201,10 +201,12 @@ function submitRegistration(){
                 showMessage('You\'ve successfully registered! :), give it a shot!', 4000);
                 if(passphrase != ''){
                   $('#currentPassword').val(passphrase);
-                  $('#currentPasswordGroup').addClass('hidden');
-                  $('#idNumber').val(newId);
-                  submitLogin();
+                }else{
+                  $('#currentPassword').val(newId);
                 }
+                $('#currentPasswordGroup').addClass('hidden');
+                $('#idNumber').val(newId);
+                submitLogin();
                 break;
 
             case 2:
