@@ -97,7 +97,7 @@ function showMessage(message, time, type){
 
 function showUsersPresent(idNumber){
   if(closing_attempts == 1){
-    $("#kickModal").modal('show');
+    $("#closeModal").modal('show');
     $("#hiddenId").val(idNumber);
     $("#password").focus();
     closing_attempts = 0;
@@ -114,6 +114,7 @@ function hideModals(){
   $('#kickModal').modal('hide');
   $('#passwordModal').modal('hide');
   $('#registration').modal('hide');
+  $('#closeModal').modal('hide');
   getStatus(true);
 }
 
