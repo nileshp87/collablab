@@ -262,9 +262,10 @@ function changePassword() {
     $('#repeatPassword').val('');
   }
   var data = {'password':oldPassword, 'newPassword':newPassword, 'idNumber': idNumber};
+
   postData('/users/changePassword', JSON.stringify(data), function(statusCode){
     switch(statusCode){
-      case 0: showMessage(); hideModals(); break;
+      case 0: swipe(idNumber); hideModals(); break;
       case 1: failedPassword(); break;
     }
   });

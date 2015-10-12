@@ -6,15 +6,6 @@ var common = require('./common');
 var config = require('./config');
 var redis = require('redis'),
     client = redis.createClient();
-var session = require('express-session');
-var RedisStore = require('connect-redis')(session);
-
-router.use(session({
-  store: new RedisStore(),
-  secret: config.cookieSecret,
-  resave: true,
-  saveUninitialized: false
-}));
 
 router.post('/changePassword', common.authInRequest, function(req, res){
   if(req.body.newPassword != null && req.body.newPassword.length > 4){
@@ -27,7 +18,10 @@ router.post('/changePassword', common.authInRequest, function(req, res){
 
 router.post('/login', common.authInRequest, function(req, res){
   req.session.user = req.user;
-  res.send('0').end();
+  console.log(req.user);
+  req.session.save(function(err){
+    res.send('0').end();
+  });
 });
 
 router.post('/logout', function(req, res){

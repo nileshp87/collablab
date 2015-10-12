@@ -5,6 +5,8 @@ var userManagement = require('./userManagement');
 var users = require('./users');
 var lab = require('./lab');
 var manage = require('./manage');
+var session = require('express-session');
+var RedisStore = require('connect-redis')(session);
 
 var internal = express();
 var external = express();
@@ -18,6 +20,13 @@ external.set('view engine', 'jade');
 var bodyParser = require('body-parser');
 internal.use(bodyParser.json());
 external.use(bodyParser.json());
+
+external.use(session({
+  store: new RedisStore(),
+  secret: config.cookieSecret,
+  resave: false,
+  saveUninitialized: false
+}));
 
 internal.get('/', function(req, res){
     res.render('internalIndex');

@@ -11,7 +11,7 @@ html(lang=en)
         h1
           | The lab is currently&nbsp;
           strong
-            span(id='isOpen') 
+            span(id='isOpen')
         form.form-signin(role='form' onsubmit="return false;")
           h2.form-signin-heading Swipe to Enter Lab
           input.form-control(type='text', placeholder='Swipe or Type User ID or Username', autofocus='', id='idNumber')
@@ -81,7 +81,7 @@ html(lang=en)
               .form-group
                 .col-md-10.col-md-offset-1
                   button.btn.btn-lg.btn-danger.btn-block(type='submit' onClick='kickRemaining()') Kick Remaining Users
-                  
+
     #kickModal.modal.fade(aria-hidden='true', tabindex='-1', role='dialog', aria-labelledby='kickingLabel')
       .modal-dialog.modal-md
         .modal-content
@@ -93,13 +93,13 @@ html(lang=en)
               small Confirm that you want to kick the user.
           .modal-body
             button.btn.btn-lg.btn-danger.btn-block(type='submit' onClick='submitLogin()') Kick
-            
-                  
+
+
     #passwordModal.modal.fade(aria-hidden='true', tabindex='-1', role='dialog', aria-labelledby='kickingLabel')
       .modal-dialog.modal-md
         .modal-content
           .modal-header
-            button(type='button', class='close', data-dismiss='kickModal')
+            button(type='button', class='close', data-dismiss='passwordModal')
             h3 Set Your Password
               br
               small All lab monitors must have a password set to open/close the lab

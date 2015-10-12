@@ -67,7 +67,8 @@ common.loggedIn = function(req, res, next){
     req.user = req.session.user;
     next();
   }else{
-    res.end();
+    res.redirect('/manage');
+    return;
   }
 };
 

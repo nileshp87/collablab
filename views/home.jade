@@ -1,0 +1,44 @@
+doctype html
+html(lang=en)
+  head
+    title WPI Collablab - #{title}
+    link(href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css', rel='stylesheet')
+    link(href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css', rel='stylesheet')
+  body
+    .container
+      .col-md-6.col-md-offset-3
+        h1.text-center
+          | Account Management
+        br
+      .col-md-10.col-md-offset-1
+        ul.nav.nav-tabs.nav-justified
+          li.active(id='selfTab' role='presentation')
+            a(href="#" onClick="loadTab(0)") Yourself
+          if user.labMonitor == 'true'
+            li(id='lmTab' role='presentation') 
+              a(href="#" onClick="loadTab(1)") Lab monitor
+          if user.exec == 'true'
+            li(id='execTab' role='presentation')
+              a(href="#" onClick="loadTab(2)") Executive
+          if user.admin == 'true'
+            li(id='adminTab' role='presentation')
+              a(href="#" onClick="loadTab(3)") Administrator
+      #self.col-md-8.col-md-offset-2
+        | Self Management
+      if user.labMonitor == 'true'
+        #lm.col-md-8.col-md-offset-2.hidden
+          | Lab Monitor Management
+      if user.exec == 'true'
+        #exec.col-md-8.col-md-offset-2.hidden
+          | Executive Management
+      if user.admin == 'true'
+        #admin.col-md-8.col-md-offset-2.hidden
+          | Administrator Management
+        
+    
+
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js')
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js')
+    script(src='/js/notify.js')
+    script(src='/js/common.js')
+    script(src='/js/home.js')

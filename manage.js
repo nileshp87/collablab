@@ -3,22 +3,18 @@ var router = express.Router();
 var common = require('./common');
 
 router.get('/', function(req, res){
+  if(req.session.user != null){
+    res.redirect('/manage/home');
+    return;
+  }
   res.render('manage');
 });
 
-router.get('home', common.loggedIn, function(req, res){
-  if(req.user.admin == 'true'){
-    res.render('admin');
-  }else if(req.user.exec == 'true'){
-    res.render('exec');
-  }else if(req.user.labMonitor == 'true'){
-    res.render('labMonitor');
-  }else{
-    res.send('Under Construction!');
-  }
+router.get('/home', common.loggedIn, function(req, res){
+  res.render('home', {'user' : req.user, 'title' : 'Management'});
 });
 
-router.post('grant', common.loggedIn, function(req, res){
+router.post('/grant', common.loggedIn, function(req, res){
   if(validGrant(req.body.type) && (common.isValidId(req.body.user) || common.isValidUsername(req.body.user))){
     var grant = req.body.type;
     if(canGrant(grant, req.user)){
@@ -42,15 +38,15 @@ router.post('grant', common.loggedIn, function(req, res){
 });
 
 
-router.post('getPermission', common.loggedIn, function(req, res){
+router.post('/getPermission', common.loggedIn, function(req, res){
 
 });
 
-router.post('changeUsername', common.loggedIn, function(req, res){
+router.post('/changeUsername', common.loggedIn, function(req, res){
 
 });
 
-router.post('updateNickname', common.loggedIn, function(req, res){
+router.post('/updateNickname', common.loggedIn, function(req, res){
 
 });
 
