@@ -55,7 +55,7 @@ common.idNumberInRequest = function(req, res, next){
       req.user = user;
       next();
     }, function(){
-      res.sed('2').end();
+      res.send('2').end();
     });
   }else{
     res.end();

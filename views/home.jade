@@ -1,3 +1,33 @@
+mixin panel(title, id)
+  .panel.panel-info
+    .panel-heading(data-toggle='collapse' role='button' aria-expanded='false' href!='#'+'Body' aria-controls!=id+'Body')= title
+    if id
+      .panel-body.collapse(id!=id+'Body')
+          block
+    else
+      .panel-body(id!=id+'Body')
+        block
+
+mixin password(title, placeholder, ident)
+  +input(title, placeholder, ident, 'password')
+
+mixin text(title, placeholder, ident)
+  +input(title, placeholder, ident, 'text')
+
+mixin input(title, placeholder, ident, type)
+  .form-group(id!=ident+'Group')
+    label.col-md-offset-1.col-md-4.control-label(for!=ident)=title
+    .col-md-6
+      input.form-control(type!=type, id!=ident, placeholder!=placeholder)
+  
+
+mixin form(action)
+  form.form-horizontal(onSubmit!=action + ';return false;')
+    block
+
+mixin button(title, action)
+  button.btn-info.btn.col-md-offset-3.col-md-6(onClick!=action)=title
+
 doctype html
 html(lang=en)
   head
@@ -23,17 +53,74 @@ html(lang=en)
           if user.admin == 'true'
             li(id='adminTab' role='presentation')
               a(href="#" onClick="loadTab(3)") Administrator
+          if user.labMonitor != 'true' || user.exec != 'true' || user.admin != 'true'
+            li(id='grantTab' role='presentation')
+              a(href='#' onClick='loadTab(4)')  Get Privileges
       #self.col-md-8.col-md-offset-2
-        | Self Management
+        br
+        +panel('Update Your Nickname')
+          +form('alert(1)')
+            +text('Desired Nickname', 'Enter your new nickname', 'nickname')
+            +button('Set Nickname', 'alert(1)')
+        +panel('Change Your Username', 'username')
+          +form('alert(1)')
+            +text('Desired Username', 'Enter your desired username', 'newUsername')
+            +button('Change Username', 'alert(1)')
+        +panel('Change Your Password', 'password')
+          +form('alert(1)')
+            +password('Your Current Password', 'Enter your current password', 'oldPassword')
+            +password('Your New Password', 'Enter your new password', 'newPassword')
+            +password('Confirm Password', 'Re-Enter your new password', 'confirmPassword')
+            +button('Change Password', 'alert(1)')
+        +panel('Delete Your Account', 'deleteSelf')
+          +form('alert(1)')
+            +password('Password', 'Enter your password to confirm action', 'password')
+            +button('Delete Account')
       if user.labMonitor == 'true'
         #lm.col-md-8.col-md-offset-2.hidden
-          | Lab Monitor Management
+          br
+          +panel('Close Lab')
+            +form('alert(1)')
+              +button('Close Lab', 'alert(1)')
+          +panel('Ban User', 'ban')
+            +form('alert(1)')
+              +text('Username or UserID', 'Enter a user identifier', 'toBan')
+              +button('Ban User', 'alert(1)')
       if user.exec == 'true'
         #exec.col-md-8.col-md-offset-2.hidden
-          | Executive Management
+          br
+          +panel('Grant Lab Monitor', 'grantLM')
+            +form('alert(1)')
+              +text('Username or ID Number', 'Enter a user identifier', '')
+              +button('Grant','alert(1)')
+          +panel('Delete User', 'deleteUser')
+            +form('alert(1)')
+              +text('Username or ID Number', 'Enter a user identifier')
+              +button('Delete', 'alert(1)')
+          +panel('Reset User Password', 'passwordReset')
+            +form('alert(1)')
+              .col-md-offset-2 Note: User's password will be reset to their ID number
+              br
+              +text('Username or ID Number', 'Enter ')
+              +button('Reset User Password','alert(1)')
       if user.admin == 'true'
         #admin.col-md-8.col-md-offset-2.hidden
-          | Administrator Management
+          br
+          +panel('Grant Exec', 'grantExec')
+            +form('alert(1)')
+              +text('Username or ID Number,')
+              +button('Grant','alert(1)')
+          +panel('Reset Database', 'dump')
+            +form('alert(1)')
+              +password('Enter Your Password', 'Enter password', 'password')
+              +password('Re-Enter Your Password', 'Re-enter your password', 'confirmPassword')
+              +button('Reset Database', 'alert(1)')
+      if user.labMonitor != 'true' || user.exec != 'true' || user.admin != 'true'
+        #grant.col-md-8.col-md-offset-2.hidden
+          +panel('Enter a Passphrase')
+            +form('alert(1)')
+              +password('Passphrase', 'Enter the passphrase', 'passphrase')
+              +button('Submit Passphrase', 'alert(1)')
         
     
 
