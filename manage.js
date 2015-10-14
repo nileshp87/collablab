@@ -1,9 +1,10 @@
 var express = require('express');
 var router = express.Router();
 var common = require('./common');
+var userManagement = require('./userManagement');
 
 router.get('/', function(req, res){
-  if(req.session.user != null){
+  if(req.session.idNumber != null){
     res.redirect('/manage/home');
     return;
   }
@@ -12,6 +13,7 @@ router.get('/', function(req, res){
 
 router.get('/home', common.loggedIn, function(req, res){
   res.render('home', {'user' : req.user, 'title' : 'Management'});
+  console.log(req.user);
 });
 
 router.post('/grant', common.loggedIn, function(req, res){
@@ -46,8 +48,13 @@ router.post('/changeUsername', common.loggedIn, function(req, res){
 
 });
 
-router.post('/updateNickname', common.loggedIn, function(req, res){
-
+router.post('/changeNickname', common.loggedIn, function(req, res){
+  if(common.isValidUsername(req.body.nickname)){
+    userManagement.changeNickname(req.user.idNumber, req.body.nickname);
+    res.send('0').end();
+  }else{
+    res.send('1').end();
+  }
 });
 
 function validGrant(grant){

@@ -65,6 +65,7 @@ userManagement.createUser = function(idNumber, username, name, password, labMoni
                              "admin", admin,
                              "needsPassword", labMonitor || exec || admin,
                              "displayName", username,
+                             "nickname", "",
                              "username", username.toLocaleLowerCase(),
                              "idNumber", idNumber);
       client.hset("users", username.toLowerCase(), idNumber);
@@ -175,6 +176,7 @@ userManagement.grantByUsername = function(grant, username, success, failure){
 };
 
 userManagement.changeNickname = function(idNumber, newNickname){
+  console.log(idNumber + ": " + newNickname );
   client.hset(idNumber, 'nickname', newNickname);
 };
 

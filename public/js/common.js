@@ -59,12 +59,12 @@ function isValidId(idNumber){
 
 function isValidUsername(username){
   var regex = /^[\d\w]{4,}$/;
-  return username != null && regex.test(username);
+  return username != null && regex.test(username) && username.length < 31;
 };
 
 function isValidName(str) {
   var regex = /^[a-zA-Z'-\s]*$/;
-  return regex.test(str);
+  return regex.test(str) && str.length < 31;
 };
 
 

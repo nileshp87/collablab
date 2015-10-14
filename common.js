@@ -9,11 +9,11 @@ common.isValidId = function(idNumber){
 };
 
 common.isValidUsername = function(username){
-  return username != null && config.usernameRegex.test(username);
+  return username != null && config.usernameRegex.test(username) && username.length < 31;
 };
 
 common.isValidName = function(str) {
-   return config.nameRegex.test(str);
+   return config.nameRegex.test(str) && str.length < 31;
 };
 
 common.authInRequest = function(req, res, next){
@@ -63,9 +63,13 @@ common.idNumberInRequest = function(req, res, next){
 }
 
 common.loggedIn = function(req, res, next){
-  if(req.session.user != null){
-    req.user = req.session.user;
-    next();
+  if(req.session.idNumber != null){
+    userManagement.getUser(req.session.idNumber, function(user){
+      req.user = user;
+      next();
+    }, function(){
+      res.redirect('/manage');
+    })
   }else{
     res.redirect('/manage');
     return;
