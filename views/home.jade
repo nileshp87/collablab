@@ -70,11 +70,15 @@ html(lang=en)
             +password('Your Current Password', 'Enter your current password', 'oldPassword')
             +password('Your New Password', 'Enter your new password', 'newPassword')
             +password('Confirm Password', 'Re-Enter your new password', 'confirmPassword')
-            +button('Change Password', 'alert(1)')
+            +button('Change Password', 'changePassword()')
+        +panel('Change Your Name', 'name')
+          +form
+            +text('Your New Name', 'Enter your desired new name', 'newName')
+            +button('Change Name', 'changeName()')
         +panel('Delete Your Account', 'deleteSelf')
           +form
             +password('Password', 'Enter your password to confirm action', 'password')
-            +button('Delete Account')
+            +button('Delete Account', 'deleteAccount()')
       if user.labMonitor == 'true'
         #lm.col-md-8.col-md-offset-2.hidden
           br

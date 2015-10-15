@@ -25,16 +25,16 @@ function show(tab){
 }
 
 function changeUsername(){
-  var username = $('#username').val();
+  var username = $('#newUsername').val();
   if(!isValidUsername(username)){
-      addError('username', 'Invalid username, must be alphanumeric, spaces between 4 and 30 characters!');
+      addError('newUsername', 'Invalid username, must be alphanumeric, spaces between 4 and 30 characters!');
       return false;
   }
-  data = {'username': username};
+  var data = {'username': username};
   postData('/manage/changeUsername', JSON.stringify(data), function(statusCode){
     switch(statusCode){
-      case 0: success('username', 'Username changed successfully!'); break;
-      case 1: addError('username', "Username is already taken!"); break;
+      case 0: success('newUsername', 'Username changed successfully!'); $('#newUsername').val(''); break;
+      case 1: addError('newUsername', "Username is already taken!"); break;
     }
   });
 }
@@ -45,7 +45,7 @@ function changeNickname(){
       addError('nickname', 'Invalid nickname, must be alphanumeric, spaces between 4 and 30 characters!');
       return false;
   }
-  data = {'nickname': nickname};
+  var data = {'nickname': nickname};
   postData('/manage/changeNickname', JSON.stringify(data), function(statusCode){
     switch(statusCode){
       case 0: success('nickname', 'Nickname changed successfully!'); break;
@@ -56,11 +56,72 @@ function changeNickname(){
 
 function passphrase(){
   var passphrase = $('#passphrase').val();
-  data = {'passphrase': passphrase};
+  var data = {'passphrase': passphrase};
   postData('/manage/getPermission', JSON.stringify(data), function(statusCode){
     switch(statusCode){
       case 0: success('passphrase', 'Passphrase granted successfully, refresh page to view!'); break;
       case 1: addError('passphrase', 'Invalid passphrase!'); break;
+    }
+  });
+}
+
+function changeName(){
+  var name = $('#newName').val();
+  var data = {'name': name};
+  if(!isValidName(name)){
+    addError('newName', 'Invalid name, must only be letters and spaces.');
+    return false;
+  }
+  postData('/manage/changeName', JSON.stringify(data), function(statusCode){
+    switch(statusCode){
+      case 0: success('newName', 'Name changed successfully'); $('#newName').val(''); break;
+      case 1: addError('newName', 'Failed for some reason, site may be down'); break;
+    }
+  });
+}
+
+function changePassword(){
+  var oldPass = $('#oldPassword').val();
+  var newPass = $('#newPassword').val();
+  var conPass = $('#confirmPassword').val();
+  var error = false;
+  if(oldPass.trim() == ''){
+    addError('oldPassword', 'You need to fill out your current password');
+    error = true;
+  }
+  if(newPass.trim() == ''){
+    addError('newPassword', 'You need to fill out a new password');
+    error = true;
+  }
+  if(newPass != conPass){
+    addError('confirmPassword', 'Your passwords do not match!');
+    $('#newPassword').val('');
+    $('#confirmPassword').val('');
+    error = true;
+  }
+  if(!error){
+    var data = {'password': oldPass, 'newPassword': newPass};
+    postData('/manage/changePassword', JSON.stringify(data), function(statusCode){
+      switch(statusCode){
+        case 0: success('confirmPassword', 'Your password has been updated successfully!'); $('#newPassword').val(''); $('#confirmPassword').val(''); break;
+        case 1: addError('oldPassword', 'Your old password was incorrect'); break;
+      }
+      $('#oldPassword').val('');
+    });
+  }
+}
+
+function deleteAccount(){
+  var password = $('#password').val();
+  var data = {'password': password};
+  if(password.trim() == ''){
+    addError('password', 'You need to fill out this before you can delete your account.');
+    return;
+  }
+  postData('/manage/deleteAccount', JSON.stringify(data), function(statusCode){
+    switch(statusCode){
+      case 0: alert('Your account is now deleted!'); location.reload(); break;
+      case 1: addError('password', 'Your password is incorrect'); $('#password').val(''); break;
     }
   });
 }

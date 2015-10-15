@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var common = require('./common');
 var userManagement = require('./userManagement');
+var lab = {};
 
 router.get('/', function(req, res){
   if(req.session.idNumber != null){
@@ -22,20 +23,20 @@ router.post('/grant', common.loggedIn, function(req, res){
     if(canGrant(grant, req.user)){
       if(common.isValidId(req.body.user)){
         userManagement.grantByIdNumber(grant, req.body.user, function(){
-          res.send(0).end();
+          res.send('0').end();
         }, function(){
-          res.send(1).end();
+          res.send('1').end();
         });
       }if(common.isValidUsername(req.body.user)){
         userManagement.grantByUsername(grant, req.body.user, function(){
-          res.send(0).end();
+          res.send('0').end();
         }, function(){
-          res.send(1).end();
+          res.send('1').end();
         });
       }
     }
   }else{
-    res.send(2).end();
+    res.send('2').end();
   }
 });
 
@@ -44,12 +45,12 @@ router.post('/getPermission', common.loggedIn, function(req, res){
   if(common.passphraseIsValid(req.body.passphrase)){
     userManagement.grantByIdNumber(common.getGrantFromPassphrase(req.body.passphrase),
     req.user.idNumber, function(){
-      res.send(0).end();
+      res.send('0').end();
     }, function(){
-      res.send(1).end();
+      res.send('1').end();
     });
   }else{
-    res.send(1).end();
+    res.send('1').end();
   }
 });
 
@@ -57,23 +58,65 @@ router.post('/changeUsername', common.loggedIn, function(req, res){
   if(common.isValidUsername(req.body.username)){
     userManagement.getUserByUsername(req.body.username,
       function(){
-        res.send(1).end();
+        res.send('1').end();
       }, function(){
-        userManagement.changeUsername(req.user.idNumber, req.body.username);
-        res.send(0).end();
+        userManagement.changeUsername(req.user.idNumber, req.body.username, req.user.username);
+        lab.updateList();
+        res.send('0').end();
       });
   }else{
-    res.send(1).end();
+    res.send('1').end();
   }
 });
 
 router.post('/changeNickname', common.loggedIn, function(req, res){
   if(common.isValidNickname(req.body.nickname)){
     userManagement.changeNickname(req.user.idNumber, req.body.nickname);
-    res.send(0).end();
+    lab.updateList();
+    res.send('0').end();
   }else{
-    res.send(1).end();
+    res.send('1').end();
   }
+});
+
+router.post('/changeName', common.loggedIn, function(req, res){
+  if(common.isValidName(req.body.name)){
+    userManagement.changeName(req.user.idNumber, req.body.name);
+    lab.updateList();
+    res.send('0').end();
+  }else{
+    res.send('1').end();
+  }
+});
+
+router.post('/changePassword', common.loggedIn, function(req, res){
+  if(req.body.password == null || req.body.newPassword == null){
+    res.end();
+    return;
+  }
+  userManagement.correctCreds(req.user.idNumber, req.body.password,
+    function(){
+      userManagement.setPassword(req.user.idNumber, req.body.newPassword);
+      res.send('0').end();
+    }, function(){
+      res.send('1').end();
+    });
+});
+
+router.post('/deleteAccount', common.loggedIn, function(req, res){
+  if(req.body.password == null){
+    res.end();
+    return;
+  }
+  userManagement.correctCreds(req.user.idNumber, req.body.password,
+    function(){
+      userManagement.delete(req.user.idNumber, function(){
+        req.session.idNumber = null;
+        res.send('0').end();
+      });
+    }, function(){
+      res.send('1').end();
+    });
 });
 
 function validGrant(grant){
@@ -92,4 +135,9 @@ function canGrant(grant, user){
   return false;
 }
 
-module.exports = router;
+function setLab(toSet){
+  console.log(toSet);
+  lab = toSet;
+}
+
+module.exports = {'routes': router, 'setLab': setLab};

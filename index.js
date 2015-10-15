@@ -42,7 +42,8 @@ external.use('/lab', lab.external);
 internal.use('/users', users);
 external.use('/users', users);
 
-external.use('/manage', manage);
+manage.setLab(lab.labActions);
+external.use('/manage', manage.routes);
 
 setup();
 internal.set('domain','localhost');

@@ -149,7 +149,7 @@ userManagement.delete = function(idNumber, success){
   client.hget(idNumber, 'username', function(error, username){
     client.hdel('users', username);
     client.hdel(idNumber, 'idNumber', 'name', 'username', 'displayName',
-      'labMonitor', 'exec', 'admin', 'password', 'salt');
+      'labMonitor', 'exec', 'admin', 'password', 'salt', 'nickname');
       success();
   });
 };
@@ -179,8 +179,15 @@ userManagement.changeNickname = function(idNumber, newNickname){
   client.hset(idNumber, 'nickname', newNickname);
 };
 
-userManagement.changeUsername = function(idNumber, newUsername){
-  client.hset(idNumber, 'username', newUsername);
+userManagement.changeUsername = function(idNumber, newUsername, oldUsername){
+  client.hset(idNumber, 'username', newUsername.toLowerCase());
+  client.hset(idNumber, 'displayName', newUsername);
+  client.hdel('users', oldUsername);
+  client.hset('users', newUsername.toLowerCase(), idNumber);
+};
+
+userManagement.changeName = function(idNumber, newName){
+  client.hset(idNumber, 'name', newName);
 };
 
 function hash(password, salt){

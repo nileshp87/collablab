@@ -5,6 +5,8 @@ var external = express.Router();
 var userManagement = require('./userManagement');
 var common = require('./common');
 
+var labActions = {};
+
 var labStatus = {
   open: false,
   members: {}
@@ -24,9 +26,7 @@ lab.post('/close', common.authInRequest, function(req, res){
   var user = req.user;
   if(user.labMonitor == 'true'){
       res.send('0').end();
-      labStatus.open = false;
-      labStatus.members = {};
-      names = [];
+      closeLab();
   }else{
     res.end();
   }
@@ -35,6 +35,20 @@ lab.post('/close', common.authInRequest, function(req, res){
 lab.post('/swipe', common.idNumberInRequest, function(req, res){
   processSwipe(req.user, res);
 });
+
+labActions.closeLab = function(){
+  labStatus.open = false;
+  labStatus.members = {};
+  names = {};
+};
+
+labActions.updateList = function(){
+  console.log('list updated');
+  names = {};
+  for (var idNumber in labStatus.members){
+    names[labStatus.members[idNumber].username] = toDisp(labStatus.members[idNumber]);
+  }
+};
 
 function processSwipe(user, res){
     if( !labStatus.open && user.labMonitor == 'false'){
@@ -87,4 +101,4 @@ function countLabMonitorsInLab(){
   }
   return count;
 }
-module.exports = {'internal': lab, 'external': external};
+module.exports = {'internal': lab, 'external': external, 'labActions': labActions};
