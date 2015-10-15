@@ -43,6 +43,6 @@ function successfulLogin(){
 }
 
 function invalidCredentials(){
-  showError('idNumber', 'Incorrect login information given!');
-  showError('password', 'Incorrect login information given!');
+  addError('idNumber', 'Incorrect login information given!');
+  addError('password', 'Incorrect login information given!');
 }

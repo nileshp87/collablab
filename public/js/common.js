@@ -58,15 +58,19 @@ function isValidId(idNumber){
 };
 
 function isValidUsername(username){
-  var regex = /^[\d\w]{4,}$/;
-  return username != null && regex.test(username) && username.length < 31;
-};
+  var regex = /^[\d\w]{4,30}$/;
+  return username != null && regex.test(username);
+}
 
 function isValidName(str) {
   var regex = /^[a-zA-Z'-\s]*$/;
   return regex.test(str) && str.length < 31;
-};
+}
 
+function isValidNickname(nickname){
+  var regex = /^[\d\w ]{4,30}$/;
+  return nickname != null && regex.test(nickname);
+};
 
 function addError(idName, error){
   $('#'+idName).notify(error, {className: 'error', elementPosition: 'right middle', autoHideDelay: 2000});

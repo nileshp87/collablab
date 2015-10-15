@@ -176,8 +176,11 @@ userManagement.grantByUsername = function(grant, username, success, failure){
 };
 
 userManagement.changeNickname = function(idNumber, newNickname){
-  console.log(idNumber + ": " + newNickname );
   client.hset(idNumber, 'nickname', newNickname);
+};
+
+userManagement.changeUsername = function(idNumber, newUsername){
+  client.hset(idNumber, 'username', newUsername);
 };
 
 function hash(password, salt){

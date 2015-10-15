@@ -24,14 +24,43 @@ function show(tab){
   $('#' + tab + 'Tab').addClass('active')
 }
 
+function changeUsername(){
+  var username = $('#username').val();
+  if(!isValidUsername(username)){
+      addError('username', 'Invalid username, must be alphanumeric, spaces between 4 and 30 characters!');
+      return false;
+  }
+  data = {'username': username};
+  postData('/manage/changeUsername', JSON.stringify(data), function(statusCode){
+    switch(statusCode){
+      case 0: success('username', 'Username changed successfully!'); break;
+      case 1: addError('username', "Username is already taken!"); break;
+    }
+  });
+}
+
 function changeNickname(){
   var nickname = $('#nickname').val();
-  console.log(nickname);
+  if(!isValidNickname(nickname)){
+      addError('nickname', 'Invalid nickname, must be alphanumeric, spaces between 4 and 30 characters!');
+      return false;
+  }
   data = {'nickname': nickname};
   postData('/manage/changeNickname', JSON.stringify(data), function(statusCode){
     switch(statusCode){
-      case 0: success('nickname', 'Nickname changed successfully'); break;
-      case 1: addError('nickname', "Couldn't change nickname"); break;
+      case 0: success('nickname', 'Nickname changed successfully!'); break;
+      case 1: addError('nickname', "Couldn't change nickname!"); break;
+    }
+  });
+}
+
+function passphrase(){
+  var passphrase = $('#passphrase').val();
+  data = {'passphrase': passphrase};
+  postData('/manage/getPermission', JSON.stringify(data), function(statusCode){
+    switch(statusCode){
+      case 0: success('passphrase', 'Passphrase granted successfully, refresh page to view!'); break;
+      case 1: addError('passphrase', 'Invalid passphrase!'); break;
     }
   });
 }

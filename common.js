@@ -76,6 +76,11 @@ common.loggedIn = function(req, res, next){
   }
 };
 
+common.isValidNickname = function(nickname){
+    var regex = /^[\d\w ]{4,30}$/;
+    return nickname != null && regex.test(nickname);
+};
+
 common.passphraseIsValid = function (passphrase){
   return passphrase != null && (
     passphrase == config.labMonitorPassphrase ||

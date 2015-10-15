@@ -67,6 +67,9 @@ function swipeIn(user){
 }
 
 function toDisp(user){
+  if(common.isValidNickname(user.nickname)){
+    return user.name + " (" + user.nickname + ")";
+  }
   return user.name;
 }
 

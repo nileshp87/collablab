@@ -60,11 +60,11 @@ html(lang=en)
         +panel('Update Your Nickname')
           +form
             +text('Desired Nickname', 'Enter your new nickname', 'nickname', user.nickname)
-            +button('Set Nickname', 'changeNickname(1)')
+            +button('Set Nickname', 'changeNickname()')
         +panel('Change Your Username', 'username')
           +form
             +text('Desired Username', 'Enter your desired username', 'newUsername')
-            +button('Change Username', 'alert(1)')
+            +button('Change Username', 'changeUsername()')
         +panel('Change Your Password', 'password')
           +form
             +password('Your Current Password', 'Enter your current password', 'oldPassword')
@@ -78,7 +78,7 @@ html(lang=en)
       if user.labMonitor == 'true'
         #lm.col-md-8.col-md-offset-2.hidden
           br
-          +panel
+          +panel('Close Lab')
             +form
               +button('Close Lab', 'alert(1)')
           +panel('Ban User', 'ban')
@@ -119,7 +119,7 @@ html(lang=en)
           +panel('Enter a Passphrase')
             +form
               +password('Passphrase', 'Enter the passphrase', 'passphrase')
-              +button('Submit Passphrase', 'alert(1)')
+              +button('Submit Passphrase', 'passphrase()')
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js')
     script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js')
     script(src='/js/notify.js')
