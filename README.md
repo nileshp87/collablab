@@ -44,7 +44,12 @@ NodeMon (Development)* - Will run script until crash, and then wait for file cha
     
     `sudo iptables -A INPUT -p tcp --destination-port 8080 -j DROP`
 
-  6. Start with ForeverJS
+  6. Start the redis server:
+    ```
+    redis-server &
+    ```
+    
+  7. Start with ForeverJS
     
     `forever start index.js`
 
@@ -65,8 +70,12 @@ NodeMon (Development)* - Will run script until crash, and then wait for file cha
     cd collablab
     npm install
     ```
+  4. Start the redis server:
+    ```
+    redis-server &
+    ```
   
-  4. Run nodemon on index.js:
+  5. Run nodemon on index.js:
     ```
     nodemon index.js
     ```
