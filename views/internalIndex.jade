@@ -47,11 +47,19 @@ html(lang=en)
                 label.col-md-offset-2.col-md-4.control-label(for='userIdNumber') Your ID Number
                 .col-md-6
                   input.form-control(type='text' placeholder='Enter Your ID Number', id="userIdNumber")
+              #passwordRegistrationGroup.form-group
+                label.col-md-offset-2.col-md-4.control-label(for='passwordRegistration') Your Desired Password
+                .col-md-6
+                  input.form-control(type='password' placeholder='Enter Your Password', id="passwordRegistration")
+              #confirmPasswordRegistrationGroup.form-group
+                label.col-md-offset-2.col-md-4.control-label(for='confirmPasswordRegistration') Confirm Your Password
+                .col-md-6
+                  input.form-control(type='password' placeholder='Confirm Your Password', id="confirmPasswordRegistration")
               #approvalGroup.form-group
                 label.col-md-offset-2.col-md-4.control-label(for='approval') Lab Monitor's ID Number
                 .col-md-6
                   input.form-control(type='text', placeholder='Enter a Lab Monitor ID Number', id='approval')
-                  #approvalGroup.form-group
+              #passphraseGroup.form-group
                 label.col-md-offset-2.col-md-4.control-label(for='passphrase') Group Passphrase (Ignore)
                 .col-md-6
                   input.form-control(type='password', placeholder='Enter Your Group\'s Passphrase', id='passphrase')

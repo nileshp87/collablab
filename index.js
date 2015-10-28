@@ -8,6 +8,8 @@ var manage = require('./manage');
 var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
 
+var sites = {};
+
 var internal = express();
 var external = express();
 
@@ -47,12 +49,12 @@ external.use('/manage', manage.routes);
 
 setup();
 internal.set('domain','localhost');
-internal.listen(8080);
-external.listen(8181);
+sites.internal = internal.listen(config.internalPort);
+sites.external = external.listen(config.externalPort);
 
 function setup(){
   if(config.nukeOnRestart){
-    //userManagement.clear(setupDatabase());
+    userManagement.clear(setupDatabase);
   }else{
     setupDatabase();
   }
@@ -60,8 +62,12 @@ function setup(){
 
 function setupDatabase() {
   userManagement.createUser(config.adminId, config.adminUsername, config.adminName,
-    config.defaultLabMonitorPassword, true, true, true, function(user){
-      console.log("Admin user not in system, creating...");
+    config.defaultAdminPassword, true, true, true, function(user){
+      if(config.debug){
+        console.log("Admin user not in system, creating...");
+      }
       userManagement.expirePassword(user.idNumber);
     });
 }
+
+module.exports = sites;

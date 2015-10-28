@@ -56,11 +56,11 @@ function processSwipe(user, res){
       return;
     }
     if(labStatus.members[user.idNumber] == undefined){
-      swipeIn(user, res);
       if(user.needsPassword == 'true'){
         res.send("4").end();
         return;
       }
+      swipeIn(user);
     }else{
       var numLabMonitors = countLabMonitorsInLab();
       if(numLabMonitors > 1 || user.labMonitor == 'false' || Object.keys(names).length == 1){

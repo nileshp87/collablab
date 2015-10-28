@@ -4,10 +4,15 @@
   "description": "Collablab Website",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha",
+    "dev": "nodemon index.js"
   },
   "author": "Nilesh Patel",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nileshp87/collablab.git"
+  },
   "dependencies": {
     "body-parser": "^1.14.0",
     "connect-redis": "^2.5.1",
@@ -15,5 +20,11 @@
     "express-session": "^1.11.3",
     "jade": "^1.11.0",
     "redis": "^1.0.0"
+  },
+  "devDependencies": {
+    "mocha": "~2.3.3",
+    "should": "~7.1.1",
+    "supertest": "~1.1.0",
+    "really-need": "~1.6.3"
   }
 }

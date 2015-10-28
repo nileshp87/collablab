@@ -120,7 +120,11 @@ function hideModals(){
 
 function showRegistration(idNumber){
   $('#registration').modal('show');
-  document.getElementById('userIdNumber').value = idNumber;
+  if(isValidId(idNumber)){
+    document.getElementById('userIdNumber').value = idNumber;
+  }else{
+    document.getElementById('username').value = idNumber;
+  }
 }
 
 function failedPassword(){
@@ -136,6 +140,8 @@ function submitRegistration(){
   var approval = convertSwipe($('#approval').val().trim());
   var username = $('#username').val().trim();
   var passphrase = $('#passphrase').val().trim();
+  var password = $('#passwordRegistration').val().trim();
+  var confirmPasswod = $('#confirmPasswordRegistration').val().trim();
 
   if(isValidId(newId)){
     $('#userIdNumber').val(newId);
@@ -174,6 +180,23 @@ function submitRegistration(){
     return false;
   }
 
+  if(password == '' && confirmPasswod == ''){
+    $('#passwordRegistration').focus();
+    return false;
+  }
+
+  if(password != confirmPasswod){
+    addError('confirmPasswordRegistration', 'Passwords do not match!');
+    addError('passwordRegistration', 'Passwords do not match!');
+    return false;
+  }
+
+  if(password.length < 5){
+    addError('passwordRegistration', 'Must be at least five characters long!');
+    $('#confirmPasswordRegistration').val('');
+    return false;
+  }
+
   if(newId.length != 9 || isNaN(parseInt(newId))){
     addError('userIdNumber', 'Invalid swipe, try again!');
     return false;
@@ -193,19 +216,13 @@ function submitRegistration(){
     return false;
   }
 
-  data = JSON.stringify({'newId':newId, 'name':name, 'approverId': approval, 'username': username, 'passphrase': passphrase});
+  data = JSON.stringify({'newId':newId, 'name':name, 'approverId': approval, 'username': username, 'passphrase': passphrase, 'password': password});
   postData('/users/register', data,
     function(statusCode){
         switch(statusCode){
             case 0:
                 hideModals();
                 showMessage('You\'ve successfully registered! :), give it a shot!', 4000);
-                if(passphrase != ''){
-                  $('#currentPassword').val(passphrase);
-                }else{
-                  $('#currentPassword').val(newId);
-                }
-                $('#currentPasswordGroup').addClass('hidden');
                 $('#idNumber').val(newId);
                 submitLogin();
                 break;

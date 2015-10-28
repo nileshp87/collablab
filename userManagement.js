@@ -69,7 +69,7 @@ userManagement.createUser = function(idNumber, username, name, password, labMoni
                              "username", username.toLocaleLowerCase(),
                              "idNumber", idNumber);
       client.hset("users", username.toLowerCase(), idNumber);
-      userManagement.setPassword(idNumber, password, true);
+      userManagement.setPassword(idNumber, password, false);
       success({"idNumber": idNumber,
               "username": username.toLowerCase(),
               "displayName": username,
@@ -77,7 +77,7 @@ userManagement.createUser = function(idNumber, username, name, password, labMoni
               "labMonitor": labMonitor,
               "exec": exec,
               "admin": admin,
-              "needsPassword": true,
+              "needsPassword": false,
               "idNumber": idNumber
             });
       }, function(){

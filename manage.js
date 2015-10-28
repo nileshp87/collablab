@@ -136,7 +136,6 @@ function canGrant(grant, user){
 }
 
 function setLab(toSet){
-  console.log(toSet);
   lab = toSet;
 }
 
