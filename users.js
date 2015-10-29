@@ -24,8 +24,8 @@ router.post('/login', common.authInRequest, function(req, res){
   });
 });
 
-router.post('/logout', function(req, res){
-  req.session.user = null;
+router.post('/logout', common.loggedIn, function(req, res){
+  req.session.idNumber = null;
   res.send('0').end();
 });
 

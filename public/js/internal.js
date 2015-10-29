@@ -119,8 +119,16 @@ function hideModals(){
 }
 
 function showRegistration(idNumber){
+  if(!labStatus.open){
+    showMessage('Lab is currently closed!', 2000, 'error');
+    return;
+  }
   $('#registration').modal('show');
-  document.getElementById('userIdNumber').value = idNumber;
+  if(common.isValidId(idNumber)){
+    document.getElementById('userIdNumber').value = idNumber;
+  }else{
+    document.getElementById('username').value = idNumber;
+  }
 }
 
 function failedPassword(){
@@ -265,7 +273,7 @@ function changePassword() {
 
   postData('/users/changePassword', JSON.stringify(data), function(statusCode){
     switch(statusCode){
-      case 0: swipe(idNumber); hideModals(); break;
+      case 0: hideModals(); break;
       case 1: failedPassword(); break;
     }
   });
@@ -292,4 +300,39 @@ function kick(username){
   $("#kickName").html(labStatus.members[username]);
   $("#kickModal").modal();
   $('#idNumber').val(username);
+}
+
+var labStatus = null;
+getStatus();
+setInterval(getStatus, 5000);
+
+function getStatus(internal){
+  getData('/lab/status', function(response){
+    updatePage(response, internal);
+  });
+}
+
+function updatePage(newStatus, internal){
+  internal = internal || false;
+  if(newStatus.open){
+    document.getElementById('isOpen').innerHTML = 'OPEN';
+    $('#isOpen').removeClass('text-danger');
+    $('#isOpen').addClass('text-success');
+  }else{
+    document.getElementById('isOpen').innerHTML = 'CLOSED';
+    $('#isOpen').removeClass('text-success');
+    $('#isOpen').addClass('text-danger');
+  }
+  var newList = '';
+  if(internal){
+    for(index in newStatus.members){
+      newList += "<button class=\"list-group-item\" onClick=\"kick('" + index +"')\">" + newStatus.members[index] +"</button>";
+    }
+  }else{
+    for(index in newStatus.members){
+      newList += "<li class=\"list-group-item\">" + newStatus.members[index] + '</li>';
+    }
+  }
+  labStatus = newStatus;
+  document.getElementById('who').innerHTML = newList;
 }

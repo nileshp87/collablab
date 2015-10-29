@@ -14,32 +14,7 @@ router.get('/', function(req, res){
 
 router.get('/home', common.loggedIn, function(req, res){
   res.render('home', {'user' : req.user, 'title' : 'Management'});
-  console.log(req.user);
 });
-
-router.post('/grant', common.loggedIn, function(req, res){
-  if(validGrant(req.body.type) && (common.isValidId(req.body.user) || common.isValidUsername(req.body.user))){
-    var grant = req.body.type;
-    if(canGrant(grant, req.user)){
-      if(common.isValidId(req.body.user)){
-        userManagement.grantByIdNumber(grant, req.body.user, function(){
-          res.send('0').end();
-        }, function(){
-          res.send('1').end();
-        });
-      }if(common.isValidUsername(req.body.user)){
-        userManagement.grantByUsername(grant, req.body.user, function(){
-          res.send('0').end();
-        }, function(){
-          res.send('1').end();
-        });
-      }
-    }
-  }else{
-    res.send('2').end();
-  }
-});
-
 
 router.post('/getPermission', common.loggedIn, function(req, res){
   if(common.passphraseIsValid(req.body.passphrase)){
@@ -103,7 +78,7 @@ router.post('/changePassword', common.loggedIn, function(req, res){
     });
 });
 
-router.post('/deleteAccount', common.loggedIn, function(req, res){
+router.post('/deleteSelf', common.loggedIn, function(req, res){
   if(req.body.password == null){
     res.end();
     return;
@@ -117,6 +92,58 @@ router.post('/deleteAccount', common.loggedIn, function(req, res){
     }, function(){
       res.send('1').end();
     });
+});
+
+router.post('/deleteAccount', common.loggedIn, function(req, res){
+  var userID = req.body.userID;
+  if(req.user.exec != 'true' || req.user.admin != 'true'){
+    res.end();
+    return;
+  }
+  if(common.isValidId(userID)){
+    userManagement.delete(userID, function(){
+      res.send('0').end();
+    });
+  }else if(common.isValidUsername(userID)){
+    userManagement.getUserByUsername(userID, function(){
+      res.send('0').end();
+    }, function(){
+      res.send('1').end();
+    });
+  }else{
+    res.send('1').end();
+  }
+});
+
+router.post('/grant', common.loggedIn, function(req, res){
+  var grant = req.body.grant;
+  var userID = req.body.userID;
+  if(common.isValidGrant(grant) && common.canGrant(req.user, grant)){
+    if(common.isValidId(userID)){
+      userManagement.grantByIdNumber(grant, userID, function(){
+        res.send('0').end();
+      }, function(){
+        res.send('1').end();
+      });
+    }else if(common.isValidUsername(userID)){
+      userManagement.grantByUsername(grant, userID, function(){
+        res.send('0').end();
+      }, function(){
+        res.send('1').end();
+      });
+    }
+  }else{
+    res.send('1').end();
+  }
+});
+
+router.post('/closeLab', common.loggedIn, function(req, res){
+  if(req.user.labMonitor == 'true' || req.user.exec == 'true'){
+    lab.closeLab();
+    res.send('0').end();
+  }else{
+    res.send('1').end();
+  }
 });
 
 function validGrant(grant){

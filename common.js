@@ -95,6 +95,21 @@ common.getGrantFromPassphrase = function(passphrase){
     case config.adminPassphrase: return 'admin';
     default: return false;
   }
-}
+};
+
+common.isValidGrant = function(grant){
+  return grant != null && (
+    grant == 'labMonitor' ||
+    grant == 'exec' ||
+    grant == 'admin');
+};
+
+common.canGrant = function(user, grant){
+  if(user.admin == 'true'){
+    return true;
+  }else if(user.exec == 'true'){
+    return grant == 'labMonitor';
+  }
+};
 
 module.exports = common;

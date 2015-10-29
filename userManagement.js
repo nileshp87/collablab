@@ -169,8 +169,10 @@ userManagement.grantByIdNumber = function(grant, user, success, failure){
 };
 
 userManagement.grantByUsername = function(grant, username, success, failure){
+  success = success || function() {};
+  failure = failure || function() {};
   userManagement.getUserByUsername(username, function(user){
-    userManagement.grantByIdNumber(grant, user.idNumber, success, faiure);
+    userManagement.grantByIdNumber(grant, user.idNumber, success, failure);
       }, failure
   );
 };

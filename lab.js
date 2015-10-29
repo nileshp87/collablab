@@ -43,11 +43,15 @@ labActions.closeLab = function(){
 };
 
 labActions.updateList = function(){
-  console.log('list updated');
+  console.log(names);
   names = {};
   for (var idNumber in labStatus.members){
-    names[labStatus.members[idNumber].username] = toDisp(labStatus.members[idNumber]);
+    userManagement.getUser(idNumber, function(user){
+      names[user.username] = toDisp(user);
+      labStatus.members[user.idNumber] = user;
+    });
   }
+  console.log(names);
 };
 
 function processSwipe(user, res){

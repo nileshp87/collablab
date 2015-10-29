@@ -5,18 +5,21 @@ function loadTab(index){
     case 1: show('lm'); break;
     case 2: show('exec'); break;
     case 3: show('admin'); break;
+    case 4: show('grant'); break;
   }
 }
 
 function hideAll(){
   $('#self').addClass('hidden');
-  $('#selfTab').removeClass('active')
+  $('#selfTab').removeClass('active');
   $('#lm').addClass('hidden');
-  $('#lmTab').removeClass('active')
+  $('#lmTab').removeClass('active');
   $('#exec').addClass('hidden');
-  $('#execTab').removeClass('active')
+  $('#execTab').removeClass('active');
   $('#admin').addClass('hidden');
-  $('#adminTab').removeClass('active')
+  $('#adminTab').removeClass('active');
+  $('#grant').addClass('hidden');
+  $('#grantTab').removeClass('active');
 }
 
 function show(tab){
@@ -25,16 +28,16 @@ function show(tab){
 }
 
 function changeUsername(){
-  var username = $('#newUsername').val();
+  var username = $('#username').val();
   if(!isValidUsername(username)){
-      addError('newUsername', 'Invalid username, must be alphanumeric, spaces between 4 and 30 characters!');
+      addError('username', 'Invalid username, must be alphanumeric, spaces between 4 and 30 characters!');
       return false;
   }
   var data = {'username': username};
   postData('/manage/changeUsername', JSON.stringify(data), function(statusCode){
     switch(statusCode){
-      case 0: success('newUsername', 'Username changed successfully!'); $('#newUsername').val(''); break;
-      case 1: addError('newUsername', "Username is already taken!"); break;
+      case 0: success('username', 'Username changed successfully!'); break;
+      case 1: addError('username', "Username is already taken!"); break;
     }
   });
 }
@@ -54,12 +57,24 @@ function changeNickname(){
   });
 }
 
-function passphrase(){
+function closeLab(){
+  postData('/manage/closeLab', '', function(statusCode){
+    switch(statusCode){
+      case 0: success('Lab close successfully!'); break;
+    }
+  })
+}
+
+function sendPassphrase(){
   var passphrase = $('#passphrase').val();
   var data = {'passphrase': passphrase};
   postData('/manage/getPermission', JSON.stringify(data), function(statusCode){
     switch(statusCode){
-      case 0: success('passphrase', 'Passphrase granted successfully, refresh page to view!'); break;
+      case 0: success('passphrase', 'Passphrase granted successfully, refresh page to view!');
+      setTimeout(function(){
+        window.location.reload();
+      }, 2000);
+      break;
       case 1: addError('passphrase', 'Invalid passphrase!'); break;
     }
   });
@@ -126,6 +141,62 @@ function deleteAccount(){
   });
 }
 
+function deleteUser(){
+  var userID = $('#toDelete').val().trim();
+  if(userID == ''){
+    addError('toDelete', 'You need to enter another user\'s identifier.');
+    return;
+  }
+  var data = {'userID': userID};
+  postData('/manage/deleteAccount', JSON.stringify(data), function(statusCode){
+    switch(statusCode){
+      case 0: success('toDelete', 'User granted lab monitor successfully!');
+              $('#toDelete').val(''); break;
+      case 1: addError('toDelete', 'User doesn\'t exist in the system.'); break;
+    }
+  });
+}
+
+function grantLabMonitor(){
+  var userID = $('#grantLMID').val().trim();
+  if(userID == ''){
+    addError('grantLMID', 'You need to enter another user\'s identifier.');
+    return;
+  }
+  var data = {'userID': userID, 'grant': 'labMonitor'};
+  postData('/manage/grant', JSON.stringify(data), function(statusCode){
+    switch(statusCode){
+      case 0: success('grantLMID', 'User granted lab monitor successfully!'); $('#grantLMID').val(''); break;
+      case 1: addError('grantLMID', 'User doesn\'t exist in the system.'); break;
+    }
+  });
+}
+
+function grantExec(){
+  var userID = $('#grantExecID').val().trim();
+  if(userID == ''){
+    addError('grantExecID', 'You need to enter another user\'s identifier.');
+    return;
+  }
+  var data = {'userID': userID, 'grant': 'exec'};
+  postData('/manage/grant', JSON.stringify(data), function(statusCode){
+    switch(statusCode){
+      case 0: success('grantExecID', 'User granted exec successfully!'); $('#grantExec').val(''); break;
+      case 1: addError('grantExecID', 'User doesn\'t exist in the system.'); break;
+    }
+  });
+}
+
+function logout(){
+  postData('/users/logout', '', function(){
+    window.location.replace('/manage');
+  });
+}
+
 function success(id, message){
-  $('#'+id).notify( message, {className: 'success', elementPosition: 'right middle', autoHideDelay: 3000});
+  if(message){
+    $('#'+id).notify( message, {className: 'success', elementPosition: 'right middle', autoHideDelay: 3000});
+  }else{
+    $.notify(id, {className: 'success', autoHideDelay: 3000});
+  }
 }

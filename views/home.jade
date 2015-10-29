@@ -35,10 +35,12 @@ html(lang=en)
     link(href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css', rel='stylesheet')
   body
     .container
-      .col-md-6.col-md-offset-3
-        h1.text-center
-          | Account Management
-        br
+      .col-md-10.col-md-offset-1
+        .well
+          h1.text-center(style='display:inline;')
+            | Collablab - Management                
+          button.pull-right.btn.btn-primary(style='display:inline;' onClick='logout()')
+            span.glyphicon.glyphicon-log-out  Logout
       .col-md-10.col-md-offset-1
         ul.nav.nav-tabs.nav-justified
           li.active(id='selfTab' role='presentation')
@@ -79,27 +81,27 @@ html(lang=en)
           +form
             +password('Password', 'Enter your password to confirm action', 'password')
             +button('Delete Account', 'deleteAccount()')
-      if user.labMonitor == 'true'
+      if (user.labMonitor == 'true' || user.admin == 'true')
         #lm.col-md-8.col-md-offset-2.hidden
           br
           +panel('Close Lab')
             +form
-              +button('Close Lab', 'alert(1)')
-          +panel('Ban User', 'ban')
-            +form
-              +text('Username or UserID', 'Enter a user identifier', 'toBan')
-              +button('Ban User', 'alert(1)')
-      if user.exec == 'true'
+              +button('Close Lab', 'closeLab()')
+      if (user.exec == 'true' || user.admin == 'true')
         #exec.col-md-8.col-md-offset-2.hidden
           br
+          if user.labMonitor != 'true'
+            +panel('Close Lab')
+              +form
+                +button('Close Lab', 'closeLab()')
           +panel('Grant Lab Monitor', 'grantLM')
             +form
-              +text('Username or ID Number', 'Enter a user identifier', '')
-              +button('Grant','alert(1)')
+              +text('Username or ID Number', 'Enter a user identifier', 'grantLMID')
+              +button('Grant','grantLabMonitor()')
           +panel('Delete User', 'deleteUser')
             +form
-              +text('Username or ID Number', 'Enter a user identifier')
-              +button('Delete', 'alert(1)')
+              +text('Username or ID Number', 'Enter a user identifier', 'toDelete')
+              +button('Delete', 'deleteUser()')
           +panel('Reset User Password', 'passwordReset')
             +form
               .col-md-offset-2 Note: User's password will be reset to their ID number
@@ -111,19 +113,20 @@ html(lang=en)
           br
           +panel('Grant Exec', 'grantExec')
             +form
-              +text('Username or ID Number,')
-              +button('Grant','alert(1)')
+              +text('Username or ID Number', 'Enter a user identifier to grant exec to', 'grantExecID')
+              +button('Grant','grantExec()')
           +panel('Reset Database', 'dump')
             +form
               +password('Enter Your Password', 'Enter password', 'password')
               +password('Re-Enter Your Password', 'Re-enter your password', 'confirmPassword')
               +button('Reset Database', 'alert(1)')
-      if user.labMonitor != 'true' || user.exec != 'true' || user.admin != 'true'
+      if (user.labMonitor != 'true' || user.exec != 'true') && user.admin != 'true'
         #grant.col-md-8.col-md-offset-2.hidden
+          br
           +panel('Enter a Passphrase')
             +form
               +password('Passphrase', 'Enter the passphrase', 'passphrase')
-              +button('Submit Passphrase', 'passphrase()')
+              +button('Submit Passphrase', 'sendPassphrase()')
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js')
     script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js')
     script(src='/js/notify.js')
