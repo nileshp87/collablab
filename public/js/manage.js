@@ -43,6 +43,6 @@ function successfulLogin(){
 }
 
 function invalidCredentials(){
-  addError('password', 'Incorrect login information given!');
-  addError('idNumber', 'Incorrect login information given!');
+  $('#password').val('');
+  addError('idNumber', 'Incorrect login information given!', true);
 }

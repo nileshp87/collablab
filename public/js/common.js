@@ -39,11 +39,13 @@ function isValidNickname(nickname){
   return nickname != null && regex.test(nickname);
 };
 
-function addError(idName, error){
+function addError(idName, error, leave){
   $('#'+idName).notify(error, {className: 'error', elementPosition: 'right middle', autoHideDelay: 2000});
   $('#'+idName).focus();
   $('#'+idName + 'Group').addClass('has-error');
-  $('#'+idName).val('');
+  if(!leave){
+    $('#'+idName).val('');
+  }
 }
 
 function convertSwipe(idNumber){
