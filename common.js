@@ -36,6 +36,8 @@ common.authInRequest = function(req, res, next){
         }, function(){
           res.send('1').end();
         });
+      }, function(){
+        res.send('1').end();
       });
   }else{
     res.end();
