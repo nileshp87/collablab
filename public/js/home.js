@@ -28,16 +28,17 @@ function show(tab){
 }
 
 function changeUsername(){
-  var username = $('#username').val();
+  console.log('test');
+  var username = $('#newUsername').val();
   if(!isValidUsername(username)){
-      addError('username', 'Invalid username, must be alphanumeric, spaces between 4 and 30 characters!');
+      addError('newUsername', 'Invalid username, must be alphanumeric, spaces between 4 and 30 characters!');
       return false;
   }
   var data = {'username': username};
   postData('/manage/changeUsername', JSON.stringify(data), function(statusCode){
     switch(statusCode){
-      case 0: success('username', 'Username changed successfully!'); break;
-      case 1: addError('username', "Username is already taken!"); break;
+      case 0: success('newUsername', 'Username changed successfully!'); break;
+      case 1: addError('newUsername', "Username is already taken!"); break;
     }
   });
 }
@@ -185,6 +186,53 @@ function grantExec(){
       case 1: addError('grantExecID', 'User doesn\'t exist in the system.'); break;
     }
   });
+}
+
+function resetPassword(){
+  var userID = $("#resetPasswordID").val().trim();
+  if(userID == ''){
+    addError('resetPasswordID', 'You need to enter another user\'s identifier.');
+    return;
+  }
+  var data = {'userID': userID};
+  postData('/manage/resetPassword', JSON.stringify(data), function(statusCode){
+    switch(statusCode){
+      case 0: success('resetPasswordID', 'User\'s password has been reset successfully!'); $('#resetPasswordID').val(''); break;
+      case 1: addError('resetPasswordID', 'User doesn\'t exist in the system.'); break;
+    }
+  });
+}
+
+function resetDatabase(){
+  var password = $('#dumpPassword').val().trim();
+  var confirmPassword = $('#confirmDumpPassword').val().trim();
+  if(password == ''){
+    addError('dumpPassword', 'You need to enter a password');
+    return false;
+  }
+  if(confirmPassword != password){
+    addError('dumpPassword', 'Your passwords do not match');
+    $('#confirmDumpPassword').val('');
+    $('#dumpPassword').focus();
+    return false;
+  }
+  if(confirm('This action will destroy the *entire* database, users, logs, EVERYTHING. Are you sure you want to do this?')){
+    data = {'password': password};
+    postData('/manage/resetDatabase', JSON.stringify(data), function(statusCode){
+      switch(statusCode){
+        case 0: alert('Everything has been deleted, default admin account is created. Page will now refresh.'); window.location.reload(); break;
+        case 1:     addError('dumpPassword', 'Your passwords were incorrect!');
+            $('#confirmDumpPassword').val('');
+            $('#dumpPassword').focus();
+            break;
+      }
+    });
+  }else{
+    $('#dumpPassword').val('');
+    $('#confirmDumpPassword').val('');
+  }
+
+
 }
 
 function logout(){

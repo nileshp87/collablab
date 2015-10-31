@@ -35,8 +35,14 @@ router.post('/register', function(req, res){
   var idNumber = req.body.newId;
   var approverId = req.body.approverId;
   var passphrase = req.body.passphrase || '';
+  var password = req.body.password || '';
+  if(!(common.isValidId(idNumber) && common.isValidUsername(username) &&
+    common.isValidName(name) && password.length > 4)){
+        res.end();
+        return;
+  }
   if(passphrase != '' && common.passphraseIsValid(passphrase)){
-    userManagement.createUser(idNumber, username, name, passphrase,
+    userManagement.createUser(idNumber, username, name, password,
        passphrase == config.labMonitorPassphrase,
        passphrase == config.execPassphrase,
        passphrase == config.adminPassphrase,
@@ -56,11 +62,10 @@ router.post('/register', function(req, res){
     return;
   }
 
-  if(common.isValidId(idNumber) && common.isValidId(approverId) &&
-    common.isValidUsername(username) && common.isValidName(name)){
+  if(common.isValidId(approverId)){
       userManagement.getUser(approverId, function(approver){
         if(approver.labMonitor == 'true'){
-          userManagement.createUser(idNumber, username, name, idNumber, false, false, false,
+          userManagement.createUser(idNumber, username, name, password, false, false, false,
              function(){
               res.send('0').end();
             }, function(error){

@@ -115,6 +115,32 @@ router.post('/deleteAccount', common.loggedIn, function(req, res){
   }
 });
 
+router.post('/resetPassword', common.loggedIn, function(req, res){
+  var userID = req.body.userID;
+  if(req.user.exec != 'true' || req.user.admin != 'true'){
+    res.end();
+    return;
+  }
+  if(common.isValidId(req.body.userID)){
+    userManagement.resetPassword(req.body.userID, function(){
+      res.send('0').end();
+    }, function(){
+      res.send('1').end();
+    });
+  }else if(common.isValidUsername(req.body.userID)){
+    userManagement.getUserByUsername(req.body.userID,
+      function(user){
+        userManagement.resetPassword(user.idNumber, function(){
+          res.send('0').end();
+        });
+      }, function(){
+        res.send('1').end();
+      });
+  }else{
+    res.end();
+  }
+});
+
 router.post('/grant', common.loggedIn, function(req, res){
   var grant = req.body.grant;
   var userID = req.body.userID;
@@ -135,6 +161,20 @@ router.post('/grant', common.loggedIn, function(req, res){
   }else{
     res.send('1').end();
   }
+});
+
+router.post('/resetDatabase', common.loggedIn, function(req, res){
+  var password = req.body.password;
+  if(!password || password.length < 5 || req.user.admin != 'true'){
+    res.end();
+    return;
+  }
+  userManagement.correctCreds(req.user.idNumber, password, function(){
+    common.resetDatabase();
+    res.send('0').end();
+  }, function(){
+    res.send('1').end();
+  });
 });
 
 router.post('/closeLab', common.loggedIn, function(req, res){
@@ -163,7 +203,6 @@ function canGrant(grant, user){
 }
 
 function setLab(toSet){
-  console.log(toSet);
   lab = toSet;
 }
 

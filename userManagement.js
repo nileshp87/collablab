@@ -69,7 +69,7 @@ userManagement.createUser = function(idNumber, username, name, password, labMoni
                              "username", username.toLocaleLowerCase(),
                              "idNumber", idNumber);
       client.hset("users", username.toLowerCase(), idNumber);
-      userManagement.setPassword(idNumber, password, true);
+      userManagement.setPassword(idNumber, password, false);
       success({"idNumber": idNumber,
               "username": username.toLowerCase(),
               "displayName": username,
@@ -77,7 +77,7 @@ userManagement.createUser = function(idNumber, username, name, password, labMoni
               "labMonitor": labMonitor,
               "exec": exec,
               "admin": admin,
-              "needsPassword": true,
+              "needsPassword": false,
               "idNumber": idNumber
             });
       }, function(){
@@ -191,6 +191,17 @@ userManagement.changeUsername = function(idNumber, newUsername, oldUsername){
 userManagement.changeName = function(idNumber, newName){
   client.hset(idNumber, 'name', newName);
 };
+
+userManagement.resetPassword = function(idNumber, success, failure){
+  console.log(idNumber);
+  success = success || function() {};
+  failure = failure || function() {};
+  userManagement.doesUserExist(idNumber,
+    function(){
+      userManagement.setPassword(idNumber, idNumber, false);
+      success();
+    }, failure);
+}
 
 function hash(password, salt){
   shasum = crypto.createHash('sha256');

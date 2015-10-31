@@ -112,4 +112,13 @@ common.canGrant = function(user, grant){
   }
 };
 
+common.resetDatabase = function(){
+  userManagement.clear(function(){
+    userManagement.createUser(config.adminId, config.adminUsername, config.adminName,
+      config.defaultAdminPassword, true, true, true, function(user){
+        userManagement.expirePassword(user.idNumber);
+      });
+  });
+};
+
 module.exports = common;
