@@ -36,6 +36,15 @@ lab.post('/swipe', common.idNumberInRequest, function(req, res){
   processSwipe(req.user, res);
 });
 
+external.post('/kick', common.loggedIn, function(req, res){
+  if(req.user.labMonitor != 'true' && req.user.exec != 'true' && req.user.admin != 'true'){
+    res.end();
+  }
+  userManagement.getUserByUsername(req.body.idNumber, function(user){
+    processSwipe(user, res);
+  });
+});
+
 labActions.closeLab = function(){
   labStatus.open = false;
   labStatus.members = {};

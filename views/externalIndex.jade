@@ -30,5 +30,23 @@ html(lang=en)
               h4
                 ul.list-group
                   div(id='who')
+    if user && user.labMonitor == 'true'
+      #kickModal.modal.fade(aria-hidden='true', tabindex='-1', role='dialog', aria-labelledby='kickingLabel')
+        .modal-dialog.modal-md
+          .modal-content
+            .modal-header
+              button.close(type='button', data-dismiss='kickModal')
+              input.hidden(type='text', id='idNumber')
+              h3 Confirm that you want to kick&nbsp;
+                span(id='kickName')
+                br
+                small Confirm that you want to kick the user.
+            .modal-body
+              button.btn.btn-lg.btn-danger.btn-block(type='submit' onClick='kickUser()') Kick
+
     script(src='js/common.js')
     script(src='js/external.js')
+    script(src='js/notify.js')
+    if user && user.labMonitor == 'true'
+      script
+        | kicking = true;

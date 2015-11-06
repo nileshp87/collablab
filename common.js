@@ -78,6 +78,22 @@ common.loggedIn = function(req, res, next){
   }
 };
 
+common.getLogin = function(req, res, next){
+  if(req.session.idNumber != null){
+    userManagement.getUser(req.session.idNumber, function(user){
+      req.user = user;
+      next();
+    }, function(){
+      req.user = null;
+      next();
+    })
+  }else{
+    req.user = null;
+    next();
+    return;
+  }
+};
+
 common.isValidNickname = function(nickname){
     var regex = /^[\d\w ]{4,30}$/;
     return nickname != null && regex.test(nickname);

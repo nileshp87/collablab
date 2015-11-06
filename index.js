@@ -7,7 +7,7 @@ var lab = require('./lab');
 var manage = require('./manage');
 var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
-
+var common = require('./common');
 var sites = {};
 
 var internal = express();
@@ -34,8 +34,8 @@ internal.get('/', function(req, res){
     res.render('internalIndex');
 });
 
-external.get('/', function(req, res){
-    res.render('externalIndex');
+external.get('/', common.getLogin, function(req, res){
+    res.render('externalIndex',{'user':req.user});
 });
 
 internal.use('/lab', lab.internal);

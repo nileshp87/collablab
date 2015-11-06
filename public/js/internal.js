@@ -73,7 +73,7 @@ function submitLogin(){
 }
 
 function swipe(idNumber){
-  data = JSON.stringify({'idNumber':idNumber});
+  var data = JSON.stringify({'idNumber':idNumber});
   postData('/lab/swipe', data,
   function(statusCode){
       switch(statusCode){
@@ -316,17 +316,16 @@ function kick(username){
 }
 
 var labStatus = null;
-getStatus();
+var internal = true;
 setInterval(getStatus, 5000);
 
-function getStatus(internal){
+function getStatus(){
   getData('/lab/status', function(response){
-    updatePage(response, internal);
+    updatePage(response);
   });
 }
 
-function updatePage(newStatus, internal){
-  internal = internal || false;
+function updatePage(newStatus){
   if(newStatus.open){
     document.getElementById('isOpen').innerHTML = 'OPEN';
     $('#isOpen').removeClass('text-danger');

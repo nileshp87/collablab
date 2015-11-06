@@ -1,15 +1,21 @@
 var labStatus = null;
 getStatus();
+var kicking = kicking || false;
 setInterval(getStatus, 5000);
 
-function getStatus(internal){
+$('#kickModal').on('hidden.bs.modal', function(){
+  $('#idNumber').val('');
+  getStatus();
+});
+
+
+function getStatus(){
   getData('/lab/status', function(response){
-    updatePage(response, internal);
+    updatePage(response);
   });
 }
 
-function updatePage(newStatus, internal){
-  internal = internal || false;
+function updatePage(newStatus){
   if(newStatus.open){
     document.getElementById('isOpen').innerHTML = 'OPEN';
     $('#isOpen').removeClass('text-danger');
@@ -20,7 +26,7 @@ function updatePage(newStatus, internal){
     $('#isOpen').addClass('text-danger');
   }
   var newList = '';
-  if(internal){
+  if(kicking){
     for(index in newStatus.members){
       newList += "<button class=\"list-group-item\" onClick=\"kick('" + index +"')\">" + newStatus.members[index] +"</button>";
     }
@@ -35,4 +41,24 @@ function updatePage(newStatus, internal){
 
 function login(){
   window.location.replace('/manage');
+}
+
+function kick(username){
+  $("#kickName").html(labStatus.members[username]);
+  $("#kickModal").modal();
+  $('#idNumber').val(username);
+}
+
+function kickUser(){
+  var idNumber = $('#idNumber').val();
+  var data = {'idNumber':idNumber};
+  postData('/lab/kick',JSON.stringify(data), function(statusCode){
+    console.log(statusCode);
+    switch(statusCode){
+      case 0:
+        $.notify("Kick Successful!", {'className':'success'});
+        $('#kickModal').modal('hide');
+      break;
+    }
+  });
 }

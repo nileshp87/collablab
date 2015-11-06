@@ -38,9 +38,14 @@ html(lang=en)
       .col-md-10.col-md-offset-1
         .well
           h1.text-center(style='display:inline;')
-            | Collablab - Management                
-          button.pull-right.btn.btn-primary(style='display:inline;' onClick='logout()')
+            | Collablab - Management
+          button.pull-right.btn.btn-primary(style='display:inline; ' onClick='logout()')
             span.glyphicon.glyphicon-log-out  Logout
+          p.pull-right
+            |&nbsp;&nbsp;
+          button.pull-right.btn.btn-primary(style='display:inline;' onClick='toStatus()')
+            span.glyphicon.glyphicon-menu-left  Lab Status
+          ="      "
       .col-md-10.col-md-offset-1
         ul.nav.nav-tabs.nav-justified
           li.active(id='selfTab' role='presentation')

@@ -248,3 +248,7 @@ function success(id, message){
     $.notify(id, {className: 'success', autoHideDelay: 3000});
   }
 }
+
+function toStatus(){
+  window.location.replace('/');
+}
