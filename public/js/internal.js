@@ -1,5 +1,8 @@
 var closing_attempts = 0;
-getStatus(true);
+var labStatus = null;
+var internal = true;
+getStatus();
+
 $('#registration').on('shown.bs.modal', function() {
   $('#name').focus();
 });
@@ -11,10 +14,13 @@ $('#registration').on('hidden.bs.modal', function() {
   $('#approval').val('');
   $('#passphrase').val('');
   $('#username').val('');
+  $("#passwordRegistration").val('');
+  $("#confirmPasswordRegistration").val('');
   $("#approvalGroup").removeClass('has-error');
   $("#userIdNumberGroup").removeClass('has-error');
   $("#passphraseGroup").removeClass('has-error');
   $("#usernameGroup").removeClass('has-error');
+  $("#passwordRegistrationCloup").removeClass('has-error');
 });
 
 $('#closeModal').on('hidden.bs.modal', function() {
@@ -55,7 +61,6 @@ function showNeedsPassword(idNumber){
 }
 
 function submitLogin(){
-    hideModals();
     var idNumber = document.getElementById('idNumber').value;
     var convertedId = convertSwipe(idNumber);
     document.getElementById('idNumber').value = '';
@@ -77,7 +82,7 @@ function swipe(idNumber){
   postData('/lab/swipe', data,
   function(statusCode){
       switch(statusCode){
-          case 0: showMessage('Success!'); break;
+          case 0: showMessage('Success!'); getStatus(); break;
           case 1: showMessage('Lab is currently closed!', 2000, 'error'); break;
           case 2: showRegistration(idNumber); break;
           case 3: showUsersPresent(idNumber); break;
@@ -92,7 +97,6 @@ function showMessage(message, time, type){
   time = time || 2000;
   type = type || 'success';
   $('#idNumber').notify(message, {className: type, elementPosition: 'left middle', autoHideDelay: time});
-  getStatus(true);
 }
 
 function showUsersPresent(idNumber){
@@ -115,7 +119,7 @@ function hideModals(){
   $('#passwordModal').modal('hide');
   $('#registration').modal('hide');
   $('#closeModal').modal('hide');
-  getStatus(true);
+  getStatus();
 }
 
 function showRegistration(idNumber){
@@ -123,12 +127,12 @@ function showRegistration(idNumber){
     showMessage('Lab is currently closed!', 2000, 'error');
     return;
   }
-  $('#registration').modal('show');
   if(isValidId(idNumber)){
     document.getElementById('userIdNumber').value = idNumber;
   }else{
     document.getElementById('username').value = idNumber;
   }
+  $('#registration').modal('show');
 }
 
 function failedPassword(){
@@ -159,12 +163,7 @@ function submitRegistration(){
     addError('name', 'Name is a required field!');
     return false;
   }
-  if(passphrase == ''){
-    if(approval == ''){
-      $('#approval').focus();
-      return false;
-    }
-  }
+
   if(!isNaN(name)){
     if(name != newId && name.length == 9){
       $('#approval').val(name);
@@ -184,7 +183,13 @@ function submitRegistration(){
     return false;
   }
 
-  if(password == '' && confirmPasswod == ''){
+  if(newId.length != 9 || isNaN(parseInt(newId))){
+    addError('userIdNumber', 'Invalid swipe, try again!');
+    return false;
+  }
+
+
+  if(password == '' && confirmPassword == ''){
     $('#passwordRegistration').focus();
     return false;
   }
@@ -201,9 +206,11 @@ function submitRegistration(){
     return false;
   }
 
-  if(newId.length != 9 || isNaN(parseInt(newId))){
-    addError('userIdNumber', 'Invalid swipe, try again!');
-    return false;
+  if(passphrase == ''){
+    if(approval == ''){
+      $('#approval').focus();
+      return false;
+    }
   }
 
   if((approval.length != 9 || isNaN(parseInt(approval))) && passphrase == ''){
@@ -314,10 +321,6 @@ function kick(username){
   $("#kickModal").modal();
   $('#idNumber').val(username);
 }
-
-var labStatus = null;
-var internal = true;
-setInterval(getStatus, 5000);
 
 function getStatus(){
   getData('/lab/status', function(response){

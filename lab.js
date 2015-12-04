@@ -52,7 +52,6 @@ labActions.closeLab = function(){
 };
 
 labActions.updateList = function(){
-  console.log(names);
   names = {};
   for (var idNumber in labStatus.members){
     userManagement.getUser(idNumber, function(user){
@@ -60,7 +59,6 @@ labActions.updateList = function(){
       labStatus.members[user.idNumber] = user;
     });
   }
-  console.log(names);
 };
 
 function processSwipe(user, res){
