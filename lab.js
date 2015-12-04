@@ -26,7 +26,7 @@ lab.post('/close', common.authInRequest, function(req, res){
   var user = req.user;
   if(user.labMonitor == 'true'){
       res.send('0').end();
-      closeLab();
+      labActions.closeLab();
   }else{
     res.end();
   }
