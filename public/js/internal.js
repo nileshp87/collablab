@@ -149,7 +149,7 @@ function submitRegistration(){
   var username = $('#username').val().trim();
   var passphrase = $('#passphrase').val().trim();
   var password = $('#passwordRegistration').val().trim();
-  var confirmPasswod = $('#confirmPasswordRegistration').val().trim();
+  var confirmPassword = $('#confirmPasswordRegistration').val().trim();
 
   if(isValidId(newId)){
     $('#userIdNumber').val(newId);
@@ -194,7 +194,7 @@ function submitRegistration(){
     return false;
   }
 
-  if(password != confirmPasswod){
+  if(password != confirmPassword){
     addError('confirmPasswordRegistration', 'Passwords do not match!');
     addError('passwordRegistration', 'Passwords do not match!');
     return false;
