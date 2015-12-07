@@ -1,6 +1,7 @@
 var closing_attempts = 0;
 var labStatus = null;
 var internal = true;
+setInterval(getStatus, 3000);
 getStatus();
 
 $('#registration').on('shown.bs.modal', function() {
@@ -123,10 +124,6 @@ function hideModals(){
 }
 
 function showRegistration(idNumber){
-  if(!labStatus.open){
-    showMessage('Lab is currently closed!', 2000, 'error');
-    return;
-  }
   if(isValidId(idNumber)){
     document.getElementById('userIdNumber').value = idNumber;
   }else{
