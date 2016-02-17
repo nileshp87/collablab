@@ -193,7 +193,6 @@ userManagement.changeName = function(idNumber, newName){
 };
 
 userManagement.resetPassword = function(idNumber, success, failure){
-  console.log(idNumber);
   success = success || function() {};
   failure = failure || function() {};
   userManagement.doesUserExist(idNumber,

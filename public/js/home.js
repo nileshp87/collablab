@@ -134,7 +134,7 @@ function deleteAccount(){
     addError('password', 'You need to fill out this before you can delete your account.');
     return;
   }
-  postData('/manage/deleteAccount', JSON.stringify(data), function(statusCode){
+  postData('/manage/deleteSelf', JSON.stringify(data), function(statusCode){
     switch(statusCode){
       case 0: alert('Your account is now deleted!'); location.reload(); break;
       case 1: addError('password', 'Your password is incorrect'); $('#password').val(''); break;
