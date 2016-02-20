@@ -13,6 +13,7 @@ router.get('/', function(req, res){
 });
 
 router.get('/home', common.loggedIn, function(req, res){
+  console.log(req.user);
   res.render('home', {'user' : req.user, 'title' : 'Management'});
 });
 
@@ -113,6 +114,46 @@ router.post('/deleteAccount', common.loggedIn, function(req, res){
   }else{
     res.send('1').end();
   }
+});
+
+router.post('/addLabHours', common.loggedIn, function(req, res){
+  var startTime = req.body.startTime;
+  var endTime = req.body.endTime;
+  var dayOfWeek = req.body.dayOfWeek;
+  if(!startTime || !endTime || !dayOfWeek || req.user.labMonitor != 'true'){
+    res.end();
+    return;
+  }
+  var startMinutes = parseInt(startTime.split(":")[0]) + parseInt(startTime.split(":")[1])
+  var endMinutes = parseInt(endTime.split(":")[0]) + parseInt(endTime.split(":")[1])
+  if(startMinutes > endMinutes){
+    res.send('1').end();
+    return;
+  }
+  try{
+    userManagement.addLabHours(req.user.idNumber, parseInt(dayOfWeek), startTime, endTime, function(){
+      res.send('0').end();
+    }, function(){
+      res.send('1').end();
+    });
+  }catch(e){
+    res.end();
+  }
+  return;
+});
+
+router.post('/deleteLabHours', common.loggedIn, function(req, res){
+  var labHourId = req.body.id;
+  if(!labHourId || req.user.labMonitor != 'true'){
+    res.end();
+    return;
+  }
+  userManagement.deleteLabHour(req.user.userID, labHourId, function(){
+    res.send('1');
+  }, function(){
+    res.send('0');
+  });
+  return;
 });
 
 router.post('/resetPassword', common.loggedIn, function(req, res){

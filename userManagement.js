@@ -20,10 +20,38 @@ userManagement.getUser = function(idNumber, success, failure){
   failure = failure || function(){};
   client.hgetall(idNumber, function(error, user){
     if(user != null){
+      if(user.labMonitor == 'true'){
+        if(user.labHours){
+          user.labHours = JSON.parse(user.labHours);
+          console.log(user.labHours);
+          userManagement.getLabHours(user.labHours, function(labHours){
+            user.labHours = labHours;
+            success(user);
+          });
+          return;
+        }
+        user.labHours = [];
+      }
       success(user);
     }else{
       failure(new Error('User does not exist'));
     }
+  });
+};
+
+userManagement.getLabHours = function(labHourList, callback){
+  labHours = [];
+  labHourList.forEach(function(hour, index, arr){
+    client.lindex('labHours', hour, function(error, data){
+      if(data){
+        var data = JSON.parse(data);
+        data.id = hour;
+        labHours.push(data);
+      }
+      if(index == arr.length - 1){
+        callback(labHours);
+      }
+    });
   });
 };
 
@@ -202,6 +230,42 @@ userManagement.resetPassword = function(idNumber, success, failure){
     }, failure);
 }
 
+userManagement.addLabHours = function(userID, dayOfWeek, startTime, endTime, success, failure){
+  success = success || function() {};
+  failure = failure || function() {};
+  client.rpush('labHours', JSON.stringify(
+                {'labMonitor': userID,
+                 'dayOfWeek': dayOfWeek,
+                 'startTime': startTime,
+                 'endTime': endTime}),
+                 function(error, data){
+                   if(data){
+                     client.rpush('labHours' + dayOfWeek, data-1);
+                     client.hgetall(userID, function(error, user){
+                       if(!user){
+                         failure();
+                         return;
+                       }
+                        if(!user.labHours){
+                          user.labHours = [];
+                        }else{
+                          user.labHours = JSON.parse(user.labHours);
+                        }
+                        user.labHours.push(data-1);
+                        client.hset(userID, 'labHours', JSON.stringify(user.labHours), function(error, data){
+                          if(data){
+                            success();
+                          }else{
+                            failure();
+                          }
+                        });
+                     });
+                   } else {
+                     failure();
+                     return;
+                   }
+                 });
+};
 function hash(password, salt){
   shasum = crypto.createHash('sha256');
   shasum.update(salt);

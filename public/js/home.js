@@ -142,6 +142,26 @@ function deleteAccount(){
   });
 }
 
+function addLabHours(){
+  var dayOfWeek = $('#dayOfWeek').val();
+  var startTime = $('#startTime').val();
+  var endTime = $('#endTime').val();
+  var data = {'dayOfWeek': dayOfWeek, 'startTime':startTime, 'endTime': endTime};
+  var startMinutes = parseInt(startTime.split(":")[0]) + parseInt(startTime.split(":")[1])
+  var endMinutes = parseInt(endTime.split(":")[0]) + parseInt(endTime.split(":")[1])
+  if(startMinutes > endMinutes){
+    addError('startTime', 'Start time must be before end time!');
+    addError('endTime', 'End time must be before end time!');
+    return;
+  }
+  postData('/manage/addLabHours', JSON.stringify(data), function(statusCode){
+    switch(statusCode){
+      case 0: alert('Your account is now deleted!');break;
+      case 1: addError('dayOfWeek', 'An error occurred.'); $('#password').val(''); break;
+    }
+  });
+}
+
 function deleteUser(){
   var userID = $('#toDelete').val().trim();
   if(userID == ''){

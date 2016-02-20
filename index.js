@@ -13,6 +13,8 @@ var sites = {};
 var internal = express();
 var external = express();
 
+internal.locals.pretty = true;
+external.locals.pretty = true;
 internal.use(express.static('public'));
 external.use(express.static('public'));
 

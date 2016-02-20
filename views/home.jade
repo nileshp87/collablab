@@ -92,6 +92,55 @@ html(lang=en)
           +panel('Close Lab')
             +form
               +button('Close Lab', 'closeLab()')
+          +panel('Lab Hours')
+            if user.labHours.length > 0
+              | Your current lab hours:
+              table.table.table-striped.table-condensed
+                thead
+                  tr
+                    th
+                      | Day of Week
+                    th
+                      | Start Time
+                    th
+                      | End Time
+                    th
+                      | Delete
+                tbody
+                  - var days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+                  for hours in user.labHours
+                    tr
+                      td
+                        =days[hours.dayOfWeek]
+                      td
+                        - var time = hours.startTime.split(':')
+                        - var hour = parseInt(time[0])
+                        - var time = hour % 12 + ':' + time[1] + (hour > 12 ? ' PM' : ' AM')
+                        =time
+                      td
+                        - var time = hours.endTime.split(':')
+                        - var hour = parseInt(time[0])
+                        - var time = hour % 12 + ':' + time[1] + (hour > 12 ? ' PM' : ' AM')
+                        =time
+                      td
+                        +button('X', 'deleteLabHour(' + hours.id + ')')
+            br
+            strong Add Lab Hours:
+            +form
+              .form-group(id='labHoursGroup')
+                label.col-md-offset-1.col-md-4.control-label(for!='dayOfWeek') Day of the Week
+                .col-md-6
+                  select.form-control(id='dayOfWeek')
+                    option(value='0') Monday
+                    option(value='1') Tuesday
+                    option(value='2') Wednesday
+                    option(value='3') Thursday
+                    option(value='4') Friday
+                    option(value='5') Saturday
+                    option(value='6') Sunday
+              +input('Start Time', '', 'startTime', 'time', '18:00')
+              +input('End Time', '', 'endTime', 'time', '19:00')
+              +button('Add Lab Hours', 'addLabHours()')
       if (user.exec == 'true' || user.admin == 'true')
         #exec.col-md-8.col-md-offset-2.hidden
           br
