@@ -315,8 +315,13 @@ function kickRemaining(){
 
 function kick(username){
   $("#kickName").html(labStatus.members[username]);
-  $("#kickModal").modal();
-  $('#idNumber').val(username);
+  $("#kickModal").modal('show');
+  $('#kickUser').val(username);
+}
+
+function submitKick(){
+	var login = $('#kickUser').val();
+	swipe(login);
 }
 
 function getStatus(){
