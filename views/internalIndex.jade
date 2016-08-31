@@ -24,11 +24,12 @@ html(lang=en)
               a(href='/schedule') Scheduled Lab Hours
 
     .container
-      .col-md-8.col-md-offset-2
+      center
         h1
           | The lab is currently&nbsp;
           strong
             span(id='isOpen')
+      .col-md-8.col-md-offset-2
         form.form-signin(role='form' onsubmit="return false;")
           h2.form-signin-heading Swipe to Enter Lab
           input.form-control(type='text', placeholder='Swipe or Type User ID or Username', autofocus='', id='idNumber')
