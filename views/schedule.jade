@@ -8,16 +8,24 @@ html(lang=en)
     link(href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css', rel='stylesheet')
     link(href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css', rel='stylesheet')
   body
+    nav.navbar.navbar-default
+      .container-fluid
+        // Brand and toggle get grouped for better mobile display
+        .navbar-header
+          button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#bs-example-navbar-collapse-1', aria-expanded='false')
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.navbar-brand(href='/') Home
+
+        // Collect the nav links, forms, and other content for toggling
+        #bs-example-navbar-collapse-1.collapse.navbar-collapse
+          ul.nav.navbar-nav
+            li
+              a(href='/schedule') Scheduled Lab Hours
+
     .container
-      .col-md-10.col-md-offset-1
-        .well
-          h1.text-center(style='display:inline;')
-            | Collablab - Lab Schedule
-      br
-      br
-      br
-      br
-      br
-      br
       center
-        iframe(src="https://calendar.google.com/calendar/embed?mode=WEEK&amp;height=600&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=f4bg9a2vrnb3onn2v941vl62mk%40group.calendar.google.com&amp;color=%23333333&amp;ctz=America%2FNew_York" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no")
+        iframe(src='https://calendar.google.com/calendar/embed?title=Scheduled%20Lab%20Hours&mode=WEEK&height=500&wkst=1&bgcolor=%23FFFFFF&src=f4bg9a2vrnb3onn2v941vl62mk%40group.calendar.google.com&color=%23333333&ctz=America%2FNew_York', style='border-width:0', width='800', height='500', frameborder='0', scrolling='no')
+

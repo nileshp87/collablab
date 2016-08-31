@@ -30,6 +30,10 @@ external.use(session({
   saveUninitialized: false
 }));
 
+internal.get('/schedule', function(req, res){
+  res.render('schedule');
+});
+
 internal.get('/', function(req, res){
     res.render('internalIndex');
 });
