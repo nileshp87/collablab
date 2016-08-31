@@ -34,6 +34,10 @@ internal.get('/', function(req, res){
     res.render('internalIndex');
 });
 
+external.get('/schedule', function(req, res){
+  res.render('schedule');
+});
+
 external.get('/', common.getLogin, function(req, res){
     res.render('externalIndex',{'user':req.user});
 });
