@@ -117,7 +117,7 @@ router.post('/deleteAccount', common.loggedIn, function(req, res){
 
 router.post('/resetPassword', common.loggedIn, function(req, res){
   var userID = req.body.userID;
-  if(req.user.exec != 'true' || req.user.admin != 'true'){
+  if(req.user.exec != 'true' && req.user.admin != 'true'){
     res.end();
     return;
   }
